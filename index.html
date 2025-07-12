@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v14
+            v16
         </div>
 
         <!-- Chat messages container -->
@@ -71,32 +71,10 @@
             보내각
         </button>
     </div>
-    <!-- Firebase status display removed -->
 
     <script type="module">
-        // Firebase 관련 import 제거
-        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        // import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase 관련 설정 및 변수 제거
-        // const firebaseConfig = {
-        //     apiKey: "AIzaSyC30Wqt9h1AJM2EPsl94k3nZjDp_poaT-s",
-        //     authDomain: "gakbbul-bot.firebaseapp.com",
-        //     projectId: "gakbbul-bot",
-        //     storageBucket: "gakbbul-bot.firebasestorage.app",
-        //     messagingSenderId: "223816062834",
-        //     appId: "1:223816062834:web:b5069ce5d47463f8c72feb",
-        //     measurementId: "G-XD02CTFVJB"
-        // };
-        // const appId = firebaseConfig.projectId; // Firebase projectId를 사용하여 appId 설정
-
-        // let app;
-        // let db;
-        // let auth;
-        let currentUserId = null; // Firebase 없이도 임의의 사용자 ID를 사용할 수 있도록 유지
-        let isLoading = false; // To manage loading state
-        // let unsubscribeFromMessages = null; // Firebase 관련 변수 제거
+        let currentUserId = null;
+        let isLoading = false;
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
@@ -104,7 +82,6 @@
         const resetButton = document.getElementById('reset-button');
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
-        // const firebaseStatusDisplay = document.getElementById('firebase-status'); // Firebase 상태 표시 제거
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -162,67 +139,6 @@
             }
         };
 
-        // Firebase 관련 saveMessage 함수 제거
-        // const saveMessage = async (sender, text) => {
-        //     if (!db || !currentUserId) {
-        //         console.error("Firestore not initialized or user not authenticated.");
-        //         return;
-        //     }
-        //     try {
-        //         const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-        //         await addDoc(messagesColRef, {
-        //             sender: sender,
-        //             text: text,
-        //             timestamp: Date.now()
-        //         });
-        //     } catch (e) {
-        //         console.error("Error adding document: ", e);
-        //     }
-        // };
-
-        // Firebase 관련 loadMessages 함수 제거
-        // const loadMessages = () => {
-        //     if (!db || !currentUserId) {
-        //         console.error("Firestore not initialized or user not authenticated for loading messages.");
-        //         return;
-        //     }
-        //     if (unsubscribeFromMessages) {
-        //         unsubscribeFromMessages();
-        //     }
-        //     const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-        //     const q = query(messagesColRef);
-        //     unsubscribeFromMessages = onSnapshot(q, (snapshot) => {
-        //         const loadedMessages = [];
-        //         snapshot.forEach((doc) => {
-        //             loadedMessages.push(doc.data());
-        //         });
-        //         loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
-        //         while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
-        //             messagesContainer.removeChild(messagesContainer.firstChild);
-        //         }
-        //         if (loadedMessages.length === 0) {
-        //             if (!initialMessageDiv) {
-        //                 initialMessageDiv = document.createElement('div');
-        //                 initialMessageDiv.id = 'initial-message';
-        //                 initialMessageDiv.className = 'text-center text-gray-500 mt-10';
-        //                 initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
-        //                 messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
-        //             }
-        //         } else {
-        //             if (initialMessageDiv) {
-        //                 initialMessageDiv.remove();
-        //                 initialMessageDiv = null;
-        //             }
-        //             loadedMessages.forEach(msg => addMessageToUI(msg.sender, msg.text));
-        //         }
-        //         scrollToBottom();
-        //     }, (error) => {
-        //         console.error("Error listening to messages:", error);
-        //         firebaseStatusDisplay.textContent = `메시지 로드 오류각: ${error.message}`;
-        //         firebaseStatusDisplay.classList.remove('hidden');
-        //     });
-        // };
-
         // Function to clear chat history by reloading the page
         const reloadPageForReset = () => {
             window.location.reload();
@@ -257,7 +173,8 @@
                     },
                 };
 
-                const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY"; // User provided Gemini API key
+                // Gemini API key updated with the user provided key
+                const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8"; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -265,6 +182,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
+                    return "응답이 이상하각. (API 통신 오류)";
+                }
 
                 const result = await response.json();
 
@@ -292,11 +215,11 @@
                     return botText;
                 } else {
                     console.error("Gemini API response structure unexpected:", result);
-                    return "응답이 이상하각.";
+                    return "응답이 이상하각. (API 응답 형식 오류)";
                 }
             } catch (error) {
                 console.error("Error fetching from Gemini API:", error);
-                return "문제 생겼각.";
+                return "문제 생겼각. (네트워크 오류)";
             } finally {
                 showLoading(false);
             }
@@ -308,12 +231,10 @@
             if (inputVal === '') return;
 
             addMessageToUI('user', inputVal);
-            // await saveMessage('user', inputVal); // Firebase 저장 기능 제거
             userInput.value = '';
 
             const botResponseText = await getBotResponse(inputVal);
             addMessageToUI('bot', botResponseText);
-            // await saveMessage('bot', botResponseText); // Firebase 저장 기능 제거
         };
 
         // Event Listeners
@@ -325,13 +246,10 @@
         });
         resetButton.addEventListener('click', reloadPageForReset);
 
-        // Initialize Firebase on window load - Firebase 초기화 코드 제거
+        // Initialize on window load
         window.onload = () => {
-            // Firebase 관련 코드 제거로 인해 초기화 시 별도 작업 불필요
-            // 사용자 ID는 Firebase 없이도 랜덤 생성하여 사용
             currentUserId = crypto.randomUUID();
             console.log('Firebase 미사용 모드각. 대화 기록은 저장되지 않아각. 사용자 ID:', currentUserId);
-            // firebaseStatusDisplay.classList.add('hidden'); // Firebase 상태 표시 제거
         };
     </script>
 </body>
