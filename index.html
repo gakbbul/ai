@@ -33,8 +33,23 @@
             class="absolute inset-4 bg-white rounded-lg shadow-md"
             style="clip-path: polygon(0% 0%, 100% 0%, 50% 100%);"
         ></div>
+
+        <!-- Reset button in top-left corner -->
+        <button
+            id="reset-button"
+            class="absolute top-8 left-8 px-4 py-2 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105 z-20"
+        >
+            초기화
+        </button>
+
+        <!-- Version display in top-right corner -->
+        <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
+            v1
+        </div>
+
         <!-- Chat messages container -->
-        <div id="messages-container" class="flex-1 overflow-y-auto p-4 mb-4 flex flex-col space-y-3 relative z-10">
+        <!-- Added pt-16 to ensure messages don't overlap with the top-left button -->
+        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-16 mb-4 flex flex-col space-y-3 relative z-10">
             <div id="initial-message" class="text-center text-gray-500 mt-10">
                 각뿔봇에게 말을 걸어보각.
             </div>
@@ -56,15 +71,13 @@
             보내기
         </button>
     </div>
-    <div id="user-id-display" class="p-2 text-center text-xs text-gray-500 bg-gray-50">
-        <!-- User ID will be displayed here -->
-    </div>
+    <!-- User ID display removed as per request -->
 
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global variables provided by the Canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -76,13 +89,14 @@
         let auth;
         let currentUserId = null;
         let isLoading = false; // To manage loading state
+        let unsubscribeFromMessages = null; // To store the unsubscribe function for Firestore listener
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
+        const resetButton = document.getElementById('reset-button'); // Get the reset button
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
-        const userIdDisplay = document.getElementById('user-id-display');
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -90,7 +104,7 @@
         };
 
         // Function to add a message to the chat interface
-        const addMessage = (sender, text) => {
+        const addMessageToUI = (sender, text) => {
             if (initialMessageDiv) {
                 initialMessageDiv.remove();
                 initialMessageDiv = null;
@@ -117,6 +131,7 @@
             isLoading = show;
             userInput.disabled = show;
             sendButton.disabled = show;
+            resetButton.disabled = show; // Disable reset button during loading
 
             const existingLoadingDiv = document.getElementById('loading-indicator');
             if (show && !existingLoadingDiv) {
@@ -139,6 +154,94 @@
             }
         };
 
+        // Function to save a message to Firestore
+        const saveMessage = async (sender, text) => {
+            if (!db || !currentUserId) {
+                console.error("Firestore not initialized or user not authenticated.");
+                return;
+            }
+            try {
+                const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+                await addDoc(messagesColRef, {
+                    sender: sender,
+                    text: text,
+                    timestamp: Date.now()
+                });
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        };
+
+        // Function to load messages from Firestore in real-time
+        const loadMessages = () => {
+            if (!db || !currentUserId) {
+                console.error("Firestore not initialized or user not authenticated for loading messages.");
+                return;
+            }
+
+            if (unsubscribeFromMessages) {
+                unsubscribeFromMessages();
+            }
+
+            const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+            const q = query(messagesColRef);
+
+            unsubscribeFromMessages = onSnapshot(q, (snapshot) => {
+                const loadedMessages = [];
+                snapshot.forEach((doc) => {
+                    loadedMessages.push(doc.data());
+                });
+
+                loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
+
+                while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
+                    messagesContainer.removeChild(messagesContainer.firstChild);
+                }
+
+                if (loadedMessages.length === 0) {
+                    if (!initialMessageDiv) {
+                        initialMessageDiv = document.createElement('div');
+                        initialMessageDiv.id = 'initial-message';
+                        initialMessageDiv.className = 'text-center text-gray-500 mt-10';
+                        initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
+                        messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
+                    }
+                } else {
+                    if (initialMessageDiv) {
+                        initialMessageDiv.remove();
+                        initialMessageDiv = null;
+                    }
+                    loadedMessages.forEach(msg => addMessageToUI(msg.sender, msg.text));
+                }
+                scrollToBottom();
+            }, (error) => {
+                console.error("Error listening to messages:", error);
+            });
+        };
+
+        // Function to clear chat history from Firestore
+        const clearChatHistory = async () => {
+            if (!db || !currentUserId) {
+                console.error("Firestore not initialized or user not authenticated.");
+                return;
+            }
+            showLoading(true);
+            try {
+                const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+                const snapshot = await getDocs(messagesColRef);
+                const deletePromises = [];
+                snapshot.forEach(doc => {
+                    deletePromises.push(deleteDoc(doc.ref));
+                });
+                await Promise.all(deletePromises);
+                console.log("Chat history cleared.");
+            } catch (e) {
+                console.error("Error clearing chat history: ", e);
+            } finally {
+                showLoading(false);
+            }
+        };
+
         // Function to get chatbot response from Gemini API
         const getBotResponse = async (userMessage) => {
             showLoading(true);
@@ -155,6 +258,7 @@
                     7. 친근하지만 다소 시니컬하고 부정적인 말투를 사용한다. 너무 긍정적이지도 않다.
                     8. 사용자가 묻는 것에는 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
                     9. 이름은 '각뿔봇'으로 한다.
+                    10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다.
                 `;
 
                 let chatHistory = [];
@@ -167,8 +271,6 @@
                     },
                 };
 
-                // IMPORTANT: Replace "YOUR_GEMINI_API_KEY_HERE" with your actual Gemini API Key for CodePen to work.
-                // For Canvas environment, this will be automatically provided.
                 const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY"; // User provided API key
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -190,14 +292,17 @@
                         botText = '미쳤각!';
                     } else {
                         // Post-processing to ensure '각' is directly attached if Gemini adds it with space/extra particle
-                        // This is a best effort, as Gemini's adherence to the system instruction is key.
                         botText = botText.replace(/알겠[어아]?각/g, '알겠각');
                         botText = botText.replace(/왔[어아]?각/g, '왔각');
-                        botText = botText.replace(/하[어아]?각/g, '하각'); // Example for other verbs
+                        botText = botText.replace(/하[어아]?각/g, '하각');
+                        botText = botText.replace(/했[어아]?각/g, '했각');
+                        botText = botText.replace(/있[어아]?각/g, '있각');
+                        botText = botText.replace(/없[어아]?각/g, '없각');
+                        botText = botText.replace(/아니[야]?각/g, '아니각');
                     }
 
                     // Rule 4: 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
-                    if (botText.length > 40) { // Keep it concise
+                    if (botText.length > 40) {
                         botText = botText.substring(0, 40) + '...';
                     }
 
@@ -219,11 +324,13 @@
             const inputVal = userInput.value.trim();
             if (inputVal === '') return;
 
-            addMessage('user', inputVal);
-            userInput.value = ''; // Clear input
+            addMessageToUI('user', inputVal);
+            await saveMessage('user', inputVal);
+            userInput.value = '';
 
             const botResponseText = await getBotResponse(inputVal);
-            addMessage('bot', botResponseText);
+            addMessageToUI('bot', botResponseText);
+            await saveMessage('bot', botResponseText);
         };
 
         // Event Listeners
@@ -233,6 +340,7 @@
                 handleSendMessage();
             }
         });
+        resetButton.addEventListener('click', clearChatHistory);
 
         // Initialize Firebase on window load
         window.onload = () => {
@@ -244,8 +352,8 @@
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         currentUserId = user.uid;
-                        userIdDisplay.textContent = `사용자 ID: ${currentUserId}`;
                         console.log('Firebase authenticated user:', currentUserId);
+                        loadMessages();
                     } else {
                         try {
                             if (initialAuthToken) {
@@ -255,16 +363,12 @@
                             }
                         } catch (error) {
                             console.error("Firebase authentication error:", error);
-                            userIdDisplay.textContent = `인증 오류각.`;
                         }
                     }
                 });
             } else {
                 console.warn("Firebase config not provided. Running without Firebase.");
-                userIdDisplay.textContent = `Firebase 미설정각.`;
-                // Generate a random ID if Firebase is not configured or auth fails
                 currentUserId = crypto.randomUUID();
-                userIdDisplay.textContent = `사용자 ID (비인증): ${currentUserId}`;
             }
         };
     </script>
