@@ -71,37 +71,32 @@
             보내각
         </button>
     </div>
-    <!-- Firebase status display -->
-    <div id="firebase-status" class="p-2 text-center text-xs text-red-500 bg-red-100">
-        <!-- Firebase status messages will be displayed here -->
-    </div>
+    <!-- Firebase status display removed -->
 
-    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Firebase 관련 import 제거
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Your web app's Firebase configuration - 사용자 제공 정보
-        const firebaseConfig = {
-            apiKey: "AIzaSyC30Wqt9h1AJM2EPsl94k3nZjDp_poaT-s",
-            authDomain: "gakbbul-bot.firebaseapp.com",
-            projectId: "gakbbul-bot",
-            storageBucket: "gakbbul-bot.firebasestorage.app",
-            messagingSenderId: "223816062834",
-            appId: "1:223816062834:web:b5069ce5d47463f8c72feb",
-            measurementId: "G-XD02CTFVJB"
-        };
+        // Firebase 관련 설정 및 변수 제거
+        // const firebaseConfig = {
+        //     apiKey: "AIzaSyC30Wqt9h1AJM2EPsl94k3nZjDp_poaT-s",
+        //     authDomain: "gakbbul-bot.firebaseapp.com",
+        //     projectId: "gakbbul-bot",
+        //     storageBucket: "gakbbul-bot.firebasestorage.app",
+        //     messagingSenderId: "223816062834",
+        //     appId: "1:223816062834:web:b5069ce5d47463f8c72feb",
+        //     measurementId: "G-XD02CTFVJB"
+        // };
+        // const appId = firebaseConfig.projectId; // Firebase projectId를 사용하여 appId 설정
 
-        // Firebase projectId를 사용하여 appId 설정
-        const appId = firebaseConfig.projectId;
-
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
+        // let app;
+        // let db;
+        // let auth;
+        let currentUserId = null; // Firebase 없이도 임의의 사용자 ID를 사용할 수 있도록 유지
         let isLoading = false; // To manage loading state
-        let unsubscribeFromMessages = null; // To store the unsubscribe function for Firestore listener
+        // let unsubscribeFromMessages = null; // Firebase 관련 변수 제거
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
@@ -109,7 +104,7 @@
         const resetButton = document.getElementById('reset-button');
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
-        const firebaseStatusDisplay = document.getElementById('firebase-status');
+        // const firebaseStatusDisplay = document.getElementById('firebase-status'); // Firebase 상태 표시 제거
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -167,72 +162,66 @@
             }
         };
 
-        // Function to save a message to Firestore
-        const saveMessage = async (sender, text) => {
-            if (!db || !currentUserId) {
-                console.error("Firestore not initialized or user not authenticated.");
-                return;
-            }
-            try {
-                const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-                await addDoc(messagesColRef, {
-                    sender: sender,
-                    text: text,
-                    timestamp: Date.now()
-                });
-            } catch (e) {
-                console.error("Error adding document: ", e);
-            }
-        };
+        // Firebase 관련 saveMessage 함수 제거
+        // const saveMessage = async (sender, text) => {
+        //     if (!db || !currentUserId) {
+        //         console.error("Firestore not initialized or user not authenticated.");
+        //         return;
+        //     }
+        //     try {
+        //         const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+        //         await addDoc(messagesColRef, {
+        //             sender: sender,
+        //             text: text,
+        //             timestamp: Date.now()
+        //         });
+        //     } catch (e) {
+        //         console.error("Error adding document: ", e);
+        //     }
+        // };
 
-        // Function to load messages from Firestore in real-time
-        const loadMessages = () => {
-            if (!db || !currentUserId) {
-                console.error("Firestore not initialized or user not authenticated for loading messages.");
-                return;
-            }
-
-            if (unsubscribeFromMessages) {
-                unsubscribeFromMessages();
-            }
-
-            const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-            const q = query(messagesColRef);
-
-            unsubscribeFromMessages = onSnapshot(q, (snapshot) => {
-                const loadedMessages = [];
-                snapshot.forEach((doc) => {
-                    loadedMessages.push(doc.data());
-                });
-
-                loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
-
-                while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
-                    messagesContainer.removeChild(messagesContainer.firstChild);
-                }
-
-                if (loadedMessages.length === 0) {
-                    if (!initialMessageDiv) {
-                        initialMessageDiv = document.createElement('div');
-                        initialMessageDiv.id = 'initial-message';
-                        initialMessageDiv.className = 'text-center text-gray-500 mt-10';
-                        initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
-                        messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
-                    }
-                } else {
-                    if (initialMessageDiv) {
-                        initialMessageDiv.remove();
-                        initialMessageDiv = null;
-                    }
-                    loadedMessages.forEach(msg => addMessageToUI(msg.sender, msg.text));
-                }
-                scrollToBottom();
-            }, (error) => {
-                console.error("Error listening to messages:", error);
-                firebaseStatusDisplay.textContent = `메시지 로드 오류각: ${error.message}`;
-                firebaseStatusDisplay.classList.remove('hidden');
-            });
-        };
+        // Firebase 관련 loadMessages 함수 제거
+        // const loadMessages = () => {
+        //     if (!db || !currentUserId) {
+        //         console.error("Firestore not initialized or user not authenticated for loading messages.");
+        //         return;
+        //     }
+        //     if (unsubscribeFromMessages) {
+        //         unsubscribeFromMessages();
+        //     }
+        //     const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+        //     const q = query(messagesColRef);
+        //     unsubscribeFromMessages = onSnapshot(q, (snapshot) => {
+        //         const loadedMessages = [];
+        //         snapshot.forEach((doc) => {
+        //             loadedMessages.push(doc.data());
+        //         });
+        //         loadedMessages.sort((a, b) => a.timestamp - b.timestamp);
+        //         while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
+        //             messagesContainer.removeChild(messagesContainer.firstChild);
+        //         }
+        //         if (loadedMessages.length === 0) {
+        //             if (!initialMessageDiv) {
+        //                 initialMessageDiv = document.createElement('div');
+        //                 initialMessageDiv.id = 'initial-message';
+        //                 initialMessageDiv.className = 'text-center text-gray-500 mt-10';
+        //                 initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
+        //                 messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
+        //             }
+        //         } else {
+        //             if (initialMessageDiv) {
+        //                 initialMessageDiv.remove();
+        //                 initialMessageDiv = null;
+        //             }
+        //             loadedMessages.forEach(msg => addMessageToUI(msg.sender, msg.text));
+        //         }
+        //         scrollToBottom();
+        //     }, (error) => {
+        //         console.error("Error listening to messages:", error);
+        //         firebaseStatusDisplay.textContent = `메시지 로드 오류각: ${error.message}`;
+        //         firebaseStatusDisplay.classList.remove('hidden');
+        //     });
+        // };
 
         // Function to clear chat history by reloading the page
         const reloadPageForReset = () => {
@@ -319,12 +308,12 @@
             if (inputVal === '') return;
 
             addMessageToUI('user', inputVal);
-            await saveMessage('user', inputVal);
+            // await saveMessage('user', inputVal); // Firebase 저장 기능 제거
             userInput.value = '';
 
             const botResponseText = await getBotResponse(inputVal);
             addMessageToUI('bot', botResponseText);
-            await saveMessage('bot', botResponseText);
+            // await saveMessage('bot', botResponseText); // Firebase 저장 기능 제거
         };
 
         // Event Listeners
@@ -336,45 +325,13 @@
         });
         resetButton.addEventListener('click', reloadPageForReset);
 
-        // Initialize Firebase on window load
+        // Initialize Firebase on window load - Firebase 초기화 코드 제거
         window.onload = () => {
-            // Firebase config가 유효한지 확인
-            if (firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId) {
-                
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        console.log('Firebase authenticated user:', currentUserId);
-                        firebaseStatusDisplay.classList.add('hidden');
-                        loadMessages();
-                    } else {
-                        try {
-                            // Sign in anonymously if no user is authenticated
-                            // Note: Anonymous authentication must be enabled in Firebase project settings
-                            await signInAnonymously(auth);
-                        } catch (error) {
-                            console.error("Firebase authentication error:", error);
-                            let errorMessage = `인증 오류각: ${error.message}. Firebase 설정 확인해봐각.`;
-                            if (error.code === 'auth/configuration-not-found') {
-                                errorMessage = `인증 오류각: Firebase 콘솔에서 'Authentication' -> 'Sign-in method'에서 'Anonymous' 로그인을 활성화했는지 확인해봐각.`;
-                            } else if (error.code === 'auth/api-key-not-valid') {
-                                errorMessage = `인증 오류각: Firebase API 키가 유효하지 않아각. Firebase 프로젝트 설정에서 API 키를 다시 확인해봐각.`;
-                            }
-                            firebaseStatusDisplay.textContent = errorMessage;
-                            firebaseStatusDisplay.classList.remove('hidden');
-                        }
-                    }
-                });
-            } else {
-                console.warn("Firebase config not provided or incomplete. Running without Firebase features.");
-                currentUserId = crypto.randomUUID(); // Fallback to a random ID for non-Firebase usage
-                firebaseStatusDisplay.textContent = `Firebase 설정 필요각. 대화 기록이 저장되지 않아각.`;
-                firebaseStatusDisplay.classList.remove('hidden');
-            }
+            // Firebase 관련 코드 제거로 인해 초기화 시 별도 작업 불필요
+            // 사용자 ID는 Firebase 없이도 랜덤 생성하여 사용
+            currentUserId = crypto.randomUUID();
+            console.log('Firebase 미사용 모드각. 대화 기록은 저장되지 않아각. 사용자 ID:', currentUserId);
+            // firebaseStatusDisplay.classList.add('hidden'); // Firebase 상태 표시 제거
         };
     </script>
 </body>
