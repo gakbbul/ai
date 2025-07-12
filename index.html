@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            beta/v5
+            beta/v7
         </div>
 
         <!-- Chat messages container -->
@@ -71,7 +71,10 @@
             보내기
         </button>
     </div>
-    <!-- User ID display removed as per request -->
+    <!-- Firebase status display -->
+    <div id="firebase-status" class="p-2 text-center text-xs text-red-500 bg-red-100 hidden">
+        <!-- Firebase status messages will be displayed here -->
+    </div>
 
     <!-- Firebase SDKs -->
     <script type="module">
@@ -93,11 +96,11 @@
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
-        // FIX: Correctly reference the send button by its ID
-        const sendButton = document.getElementById('send-button');
-        const resetButton = document.getElementById('reset-button'); // Get the reset button
+        const sendButton = document.getElementById('send-button'); // Correctly referenced
+        const resetButton = document.getElementById('reset-button');
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
+        const firebaseStatusDisplay = document.getElementById('firebase-status'); // Get the Firebase status display element
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -217,29 +220,41 @@
                 scrollToBottom();
             }, (error) => {
                 console.error("Error listening to messages:", error);
+                firebaseStatusDisplay.textContent = `메시지 로드 오류각: ${error.message}`;
+                firebaseStatusDisplay.classList.remove('hidden');
             });
         };
 
         // Function to clear chat history from Firestore
         const clearChatHistory = async () => {
+            console.log("clearChatHistory called."); // Debugging line
             if (!db || !currentUserId) {
-                console.error("Firestore not initialized or user not authenticated.");
+                console.error("Firestore not initialized or user not authenticated for clearChatHistory.");
+                firebaseStatusDisplay.textContent = `초기화 실패각: Firebase 인증 필요각.`;
+                firebaseStatusDisplay.classList.remove('hidden');
+                showLoading(false); // Ensure loading is turned off even if not initialized
                 return;
             }
             showLoading(true);
             try {
                 const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
+                console.log("Attempting to get documents for deletion..."); // Debugging line
                 const snapshot = await getDocs(messagesColRef);
                 const deletePromises = [];
                 snapshot.forEach(doc => {
                     deletePromises.push(deleteDoc(doc.ref));
                 });
+                console.log(`Found ${deletePromises.length} documents to delete.`); // Debugging line
                 await Promise.all(deletePromises);
-                console.log("Chat history cleared.");
+                console.log("Chat history cleared successfully."); // Debugging line
+                firebaseStatusDisplay.classList.add('hidden'); // Hide status on success
             } catch (e) {
                 console.error("Error clearing chat history: ", e);
+                firebaseStatusDisplay.textContent = `초기화 오류각: ${e.message}`;
+                firebaseStatusDisplay.classList.remove('hidden');
             } finally {
                 showLoading(false);
+                console.log("showLoading(false) called in finally block."); // Debugging line
             }
         };
 
@@ -355,6 +370,7 @@
                     if (user) {
                         currentUserId = user.uid;
                         console.log('Firebase authenticated user:', currentUserId);
+                        firebaseStatusDisplay.classList.add('hidden'); // Hide status if authenticated
                         loadMessages();
                     } else {
                         try {
@@ -365,12 +381,16 @@
                             }
                         } catch (error) {
                             console.error("Firebase authentication error:", error);
+                            firebaseStatusDisplay.textContent = `인증 오류각: ${error.message}`;
+                            firebaseStatusDisplay.classList.remove('hidden');
                         }
                     }
                 });
             } else {
                 console.warn("Firebase config not provided. Running without Firebase.");
                 currentUserId = crypto.randomUUID();
+                firebaseStatusDisplay.textContent = `Firebase 미설정각. 일부 기능 제한될 수 있각.`;
+                firebaseStatusDisplay.classList.remove('hidden');
             }
         };
     </script>
