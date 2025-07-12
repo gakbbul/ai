@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v9
+            v14
         </div>
 
         <!-- Chat messages container -->
@@ -79,13 +79,22 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global variables provided by the Canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // Your web app's Firebase configuration - 사용자 제공 정보
+        const firebaseConfig = {
+            apiKey: "AIzaSyC30Wqt9h1AJM2EPsl94k3nZjDp_poaT-s",
+            authDomain: "gakbbul-bot.firebaseapp.com",
+            projectId: "gakbbul-bot",
+            storageBucket: "gakbbul-bot.firebasestorage.app",
+            messagingSenderId: "223816062834",
+            appId: "1:223816062834:web:b5069ce5d47463f8c72feb",
+            measurementId: "G-XD02CTFVJB"
+        };
+
+        // Firebase projectId를 사용하여 appId 설정
+        const appId = firebaseConfig.projectId;
 
         let app;
         let db;
@@ -259,7 +268,7 @@
                     },
                 };
 
-                const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY";
+                const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY"; // User provided Gemini API key
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -325,12 +334,13 @@
                 handleSendMessage();
             }
         });
-        // Changed reset button to reload the page
         resetButton.addEventListener('click', reloadPageForReset);
 
         // Initialize Firebase on window load
         window.onload = () => {
-            if (Object.keys(firebaseConfig).length > 0) {
+            // Firebase config가 유효한지 확인
+            if (firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId) {
+                
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
@@ -343,21 +353,25 @@
                         loadMessages();
                     } else {
                         try {
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
+                            // Sign in anonymously if no user is authenticated
+                            // Note: Anonymous authentication must be enabled in Firebase project settings
+                            await signInAnonymously(auth);
                         } catch (error) {
                             console.error("Firebase authentication error:", error);
-                            firebaseStatusDisplay.textContent = `인증 오류각: ${error.message}. Firebase 설정 확인해봐각.`;
+                            let errorMessage = `인증 오류각: ${error.message}. Firebase 설정 확인해봐각.`;
+                            if (error.code === 'auth/configuration-not-found') {
+                                errorMessage = `인증 오류각: Firebase 콘솔에서 'Authentication' -> 'Sign-in method'에서 'Anonymous' 로그인을 활성화했는지 확인해봐각.`;
+                            } else if (error.code === 'auth/api-key-not-valid') {
+                                errorMessage = `인증 오류각: Firebase API 키가 유효하지 않아각. Firebase 프로젝트 설정에서 API 키를 다시 확인해봐각.`;
+                            }
+                            firebaseStatusDisplay.textContent = errorMessage;
                             firebaseStatusDisplay.classList.remove('hidden');
                         }
                     }
                 });
             } else {
-                console.warn("Firebase config not provided. Running without Firebase.");
-                currentUserId = crypto.randomUUID();
+                console.warn("Firebase config not provided or incomplete. Running without Firebase features.");
+                currentUserId = crypto.randomUUID(); // Fallback to a random ID for non-Firebase usage
                 firebaseStatusDisplay.textContent = `Firebase 설정 필요각. 대화 기록이 저장되지 않아각.`;
                 firebaseStatusDisplay.classList.remove('hidden');
             }
