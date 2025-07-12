@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v8
+            v9
         </div>
 
         <!-- Chat messages container -->
@@ -225,37 +225,9 @@
             });
         };
 
-        // Function to clear chat history from Firestore
-        const clearChatHistory = async () => {
-            console.log("clearChatHistory called.");
-            if (!db || !currentUserId) {
-                console.error("Firestore not initialized or user not authenticated for clearChatHistory.");
-                firebaseStatusDisplay.textContent = `초기화 실패각: Firebase 인증 필요각. (Firebase 설정 확인)`;
-                firebaseStatusDisplay.classList.remove('hidden');
-                showLoading(false);
-                return;
-            }
-            showLoading(true);
-            try {
-                const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-                console.log("Attempting to get documents for deletion...");
-                const snapshot = await getDocs(messagesColRef);
-                const deletePromises = [];
-                snapshot.forEach(doc => {
-                    deletePromises.push(deleteDoc(doc.ref));
-                });
-                console.log(`Found ${deletePromises.length} documents to delete.`);
-                await Promise.all(deletePromises);
-                console.log("Chat history cleared successfully.");
-                firebaseStatusDisplay.classList.add('hidden');
-            } catch (e) {
-                console.error("Error clearing chat history: ", e);
-                firebaseStatusDisplay.textContent = `초기화 오류각: ${e.message}`;
-                firebaseStatusDisplay.classList.remove('hidden');
-            } finally {
-                showLoading(false);
-                console.log("showLoading(false) called in finally block.");
-            }
+        // Function to clear chat history by reloading the page
+        const reloadPageForReset = () => {
+            window.location.reload();
         };
 
         // Function to get chatbot response from Gemini API
@@ -353,7 +325,8 @@
                 handleSendMessage();
             }
         });
-        resetButton.addEventListener('click', clearChatHistory);
+        // Changed reset button to reload the page
+        resetButton.addEventListener('click', reloadPageForReset);
 
         // Initialize Firebase on window load
         window.onload = () => {
