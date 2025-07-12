@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v4
+            v5
         </div>
 
         <!-- Chat messages container -->
@@ -93,7 +93,8 @@
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('user-input');
+        // FIX: Correctly reference the send button by its ID
+        const sendButton = document.getElementById('send-button');
         const resetButton = document.getElementById('reset-button'); // Get the reset button
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
