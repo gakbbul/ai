@@ -44,7 +44,7 @@
 
         <!-- Version display in top-right corner -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            beta/v7
+            v8
         </div>
 
         <!-- Chat messages container -->
@@ -68,11 +68,11 @@
             id="send-button"
             class="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
         >
-            보내기
+            보내각
         </button>
     </div>
     <!-- Firebase status display -->
-    <div id="firebase-status" class="p-2 text-center text-xs text-red-500 bg-red-100 hidden">
+    <div id="firebase-status" class="p-2 text-center text-xs text-red-500 bg-red-100">
         <!-- Firebase status messages will be displayed here -->
     </div>
 
@@ -80,7 +80,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global variables provided by the Canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -96,11 +96,11 @@
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button'); // Correctly referenced
+        const sendButton = document.getElementById('send-button');
         const resetButton = document.getElementById('reset-button');
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
-        const firebaseStatusDisplay = document.getElementById('firebase-status'); // Get the Firebase status display element
+        const firebaseStatusDisplay = document.getElementById('firebase-status');
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -135,7 +135,7 @@
             isLoading = show;
             userInput.disabled = show;
             sendButton.disabled = show;
-            resetButton.disabled = show; // Disable reset button during loading
+            resetButton.disabled = show;
 
             const existingLoadingDiv = document.getElementById('loading-indicator');
             if (show && !existingLoadingDiv) {
@@ -227,34 +227,34 @@
 
         // Function to clear chat history from Firestore
         const clearChatHistory = async () => {
-            console.log("clearChatHistory called."); // Debugging line
+            console.log("clearChatHistory called.");
             if (!db || !currentUserId) {
                 console.error("Firestore not initialized or user not authenticated for clearChatHistory.");
-                firebaseStatusDisplay.textContent = `초기화 실패각: Firebase 인증 필요각.`;
+                firebaseStatusDisplay.textContent = `초기화 실패각: Firebase 인증 필요각. (Firebase 설정 확인)`;
                 firebaseStatusDisplay.classList.remove('hidden');
-                showLoading(false); // Ensure loading is turned off even if not initialized
+                showLoading(false);
                 return;
             }
             showLoading(true);
             try {
                 const messagesColRef = collection(db, `artifacts/${appId}/users/${currentUserId}/messages`);
-                console.log("Attempting to get documents for deletion..."); // Debugging line
+                console.log("Attempting to get documents for deletion...");
                 const snapshot = await getDocs(messagesColRef);
                 const deletePromises = [];
                 snapshot.forEach(doc => {
                     deletePromises.push(deleteDoc(doc.ref));
                 });
-                console.log(`Found ${deletePromises.length} documents to delete.`); // Debugging line
+                console.log(`Found ${deletePromises.length} documents to delete.`);
                 await Promise.all(deletePromises);
-                console.log("Chat history cleared successfully."); // Debugging line
-                firebaseStatusDisplay.classList.add('hidden'); // Hide status on success
+                console.log("Chat history cleared successfully.");
+                firebaseStatusDisplay.classList.add('hidden');
             } catch (e) {
                 console.error("Error clearing chat history: ", e);
                 firebaseStatusDisplay.textContent = `초기화 오류각: ${e.message}`;
                 firebaseStatusDisplay.classList.remove('hidden');
             } finally {
                 showLoading(false);
-                console.log("showLoading(false) called in finally block."); // Debugging line
+                console.log("showLoading(false) called in finally block.");
             }
         };
 
@@ -262,7 +262,6 @@
         const getBotResponse = async (userMessage) => {
             showLoading(true);
             try {
-                // System instruction for Gemini to adhere to the persona rules
                 const systemInstruction = `
                     너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
                     1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
@@ -270,7 +269,7 @@
                     3. 놀라거나 당황스러울 때는 '미쳤각!' 한 문장으로만 쓴다.
                     4. 친구처럼 짧고 간단하게 말한다. 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
                     5. 사투리 느낌은 아니다.
-                    6. 대화를 이어가려는 질문은 하지 않는다.
+                    6. 대화를 이어가려는 질문은 하지 않는다. 오직 질문받은 것에만 대답한다.
                     7. 친근하지만 다소 시니컬한 말투를 사용한다. 과도하게 귀찮아하거나 부정적인 표현은 자제한다. 사용자의 질문에 대한 핵심 정보는 명확하게 제공한다.
                     8. 사용자가 묻는 것에는 명확하게 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
                     9. 이름은 '각뿔봇'으로 한다.
@@ -284,11 +283,11 @@
                 const payload = {
                     contents: chatHistory,
                     generationConfig: {
-                        responseMimeType: "text/plain", // Request plain text response
+                        responseMimeType: "text/plain",
                     },
                 };
 
-                const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY"; // User provided API key
+                const apiKey = "AIzaSyB0bF-8-KE9OP0Ojc0VsqOCB0C1sqCXmxY";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -304,11 +303,9 @@
                     result.candidates[0].content.parts.length > 0) {
                     let botText = result.candidates[0].content.parts[0].text.trim();
 
-                    // Rule 3: "미쳤각!" for surprise/dismay (simple keyword check)
                     if (userMessage.includes('놀라') || userMessage.includes('당황')) {
                         botText = '미쳤각!';
                     } else {
-                        // Post-processing to ensure '각' is directly attached if Gemini adds it with space/extra particle
                         botText = botText.replace(/알겠[어아]?각/g, '알겠각');
                         botText = botText.replace(/왔[어아]?각/g, '왔각');
                         botText = botText.replace(/하[어아]?각/g, '하각');
@@ -318,7 +315,6 @@
                         botText = botText.replace(/아니[야]?각/g, '아니각');
                     }
 
-                    // Rule 4: 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
                     if (botText.length > 40) {
                         botText = botText.substring(0, 40) + '...';
                     }
@@ -370,7 +366,7 @@
                     if (user) {
                         currentUserId = user.uid;
                         console.log('Firebase authenticated user:', currentUserId);
-                        firebaseStatusDisplay.classList.add('hidden'); // Hide status if authenticated
+                        firebaseStatusDisplay.classList.add('hidden');
                         loadMessages();
                     } else {
                         try {
@@ -381,7 +377,7 @@
                             }
                         } catch (error) {
                             console.error("Firebase authentication error:", error);
-                            firebaseStatusDisplay.textContent = `인증 오류각: ${error.message}`;
+                            firebaseStatusDisplay.textContent = `인증 오류각: ${error.message}. Firebase 설정 확인해봐각.`;
                             firebaseStatusDisplay.classList.remove('hidden');
                         }
                     }
@@ -389,7 +385,7 @@
             } else {
                 console.warn("Firebase config not provided. Running without Firebase.");
                 currentUserId = crypto.randomUUID();
-                firebaseStatusDisplay.textContent = `Firebase 미설정각. 일부 기능 제한될 수 있각.`;
+                firebaseStatusDisplay.textContent = `Firebase 설정 필요각. 대화 기록이 저장되지 않아각.`;
                 firebaseStatusDisplay.classList.remove('hidden');
             }
         };
