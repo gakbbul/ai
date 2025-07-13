@@ -8,13 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        html, body { /* Added html to ensure full viewport height */
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
         body {
             font-family: 'Inter', sans-serif;
+            margin: 0;
             overflow: hidden; /* Prevent body scroll */
         }
         /* Custom styles for bouncing dots loading animation */
@@ -82,79 +78,63 @@
 <body class="flex flex-col h-screen bg-gray-100 antialiased">
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <div id="changelog-data" class="hidden">
-        <h2>v27</h2>
-        <ul>
-            <li><strong>메시지 입력창 위치 수정:</strong> 채팅 화면의 메시지 입력창이 화면 아래에 제대로 고정되도록 레이아웃을 개선했각.</li>
-        </ul>
-
-        <h2>v26</h2>
-        <ul>
-            <li><strong>메시지 입력창 위치 수정:</strong> 메시지 입력창이 화면 아래에 제대로 고정되도록 수정했각.</li>
-        </ul>
-
-        <h2>v24</h2>
-        <ul>
-            <li><strong>대화 기억 기능 개선:</strong> 각뿔봇이 대화를 기억할 수 있게 되어 좀 더 수월한 대화를 할 수 있게 되었각.</li>
-        </ul>
-
-        <h2>v23</h2>
-        <ul>
-            <li><strong>변경 사항 내용 간소화:</strong> 사용자가 이해하기 쉽게 변경 사항 설명을 간략하게 다듬었각. 개발자용 세부 내용은 모두 빼버렸각.</li>
-            <li><strong>업데이트 날짜 제거:</b> 각 버전별 업데이트 날짜를 없앴각.</li>
-            <li><strong>v14 기억 기능 설명 제거:</strong> v14 변경 사항에서 기억 기능 관련 설명을 완전히 뺐각.</li>
-        </ul>
-
-        <h2>v22</h2>
+        <h2>v22 (2025년 7월 13일)</h2>
         <ul>
             <li><strong>프로필 기능 추가:</strong> 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 프로필 기능이 생겼각.</li>
             <li><strong>개인화된 답변:</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
             <li><strong>프로필 정보 저장 방식 변경:</strong> 프로필 정보는 이제 브라우저를 닫아도 사라지지 않고 기억될 거각. 대화 기록은 여전히 브라우저 탭을 닫으면 사라져각.</li>
+            <li><strong>버전 업데이트:</strong> `v21`에서 `v22`로 변경했각.</li>
         </ul>
 
-        <h2>v21</h2>
+        <h2>v21 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>단일 페이지 변경 사항 구현:</b> '변경 사항' 버튼을 누르면 새 창이 아니라 지금 보고 있는 화면에 바로 변경 내용이 나타나각.</li>
-            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴 버튼을 누르면 버튼 색깔이 살짝 연해져서 메뉴가 열린 걸 알 수 있각.</li>
+            <li><strong>단일 페이지 변경 사항 구현:</strong> '변경 사항' 버튼 클릭 시 새 페이지로 이동하는 대신, 현재 페이지 내에서 모달 창으로 변경 이력을 표시하도록 수정했각.</li>
+            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴가 열렸을 때 메뉴 버튼의 배경색이 `bg-gray-600`으로 연하게 변경되도록 수정했각.</li>
         </ul>
 
-        <h2>v20</h2>
+        <h2>v20 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>메뉴 버튼 시각 피드백 추가:</strong> 왼쪽 상단 메뉴 버튼을 누르면 색깔이 살짝 바뀌어각.</li>
-            <li><strong>'변경 사항' 버튼 추가:</strong> 메뉴에 '변경 사항' 버튼이 생겼각.</li>
-            <li><strong>모바일 버튼 글씨 개선:</strong> 모바일에서 '보내각' 버튼 글씨가 깨지지 않고 잘 보이게 고쳤각.</li>
+            <li><strong>메뉴 버튼 시각 피드백 추가:</strong> 왼쪽 상단 메뉴 버튼 클릭 시 색상이 연하게 변경되도록 수정했각.</li>
+            <li><strong>'변경 사항' 버튼 추가:</strong> 메뉴 드롭다운에 '변경 사항' 버튼을 추가했각.</li>
+            <li><strong>'변경 사항' 페이지 구현:</strong> '변경 사항' 버튼 클릭 시 별도의 페이지로 이동하여 변경 이력을 볼 수 있도록 했각.</li>
+            <li><strong>'보내각' 버튼 텍스트 줄바꿈 방지:</strong> 모바일 환경에서 '보내각' 버튼 텍스트가 세로로 표시되는 문제 해결을 위해 `whitespace-nowrap` 스타일을 추가했각.</li>
         </ul>
 
-        <h2>v19</h2>
+        <h2>v19 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>대화 기록 저장 방식 변경:</strong> 대화 기록이 이제 브라우저 탭을 닫으면 사라지도록 바뀌었각.</li>
-            <li><strong>오류 메시지 제거:</strong> 이전 버전에서 보이던 오류 메시지가 더 이상 안 보이게 했각.</li>
+            <li><strong>Firebase 제거 및 SessionStorage 적용:</strong> 대화 기록 저장 방식을 Firebase에서 SessionStorage로 변경했각. 이제 브라우저 탭을 닫으면 대화 기록이 초기화돼각.</li>
+            <li><strong>Firebase 오류 메시지 제거:</strong> Firebase 관련 오류 메시지가 더 이상 표시되지 않아각.</li>
+            <li><strong>버전명 업데이트:</strong> 'beta/' 접두사를 제거하고 버전명을 'v19'로 변경했각.</li>
         </ul>
 
-        <h2>v18</h2>
+        <h2>v18 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>응답 오류 메시지 개선:</strong> 각뿔봇이 대답을 못 할 때, 왜 그런지 더 자세히 알려주도록 고쳤각.</li>
+            <li><strong>API 키 업데이트:</strong> 사용자 제공 Gemini API 키를 코드에 적용했각.</li>
+            <li><strong>API 오류 메시지 개선:</strong> Gemini API 통신 오류 시 사용자에게 더 자세한 오류 메시지를 표시하도록 개선했각.</li>
         </ul>
 
-        <h2>v17</h2>
+        <h2>v17 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼 색깔을 회색으로 바꿨각.</li>
+            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼의 색상을 회색으로 변경했각.</li>
         </ul>
 
-        <h2>v16</h2>
+        <h2>v16 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 위로 옮겼각.</li>
+            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 상단으로 이동시켰각.</li>
+            <li><strong>메시지 컨테이너 패딩 조정:</strong> 초기화 버튼과 메시지가 겹치지 않도록 채팅 메시지 컨테이너의 상단 패딩을 조정했각.</li>
         </ul>
 
-        <h2>v15</h2>
+        <h2>v15 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>버전 표시 기능 추가:</strong> 앱 오른쪽 위에 현재 버전이 표시되게 했각.</li>
+            <li><strong>버전명 표시 기능 추가:</strong> 앱 오른쪽 상단에 현재 버전명(v15)을 작게 표시하도록 했각.</li>
         </ul>
 
-        <h2>v14</h2>
+        <h2>v14 (2025년 7월 13일)</h2>
         <ul>
             <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 처음부터 다시 시작할 수 있는 버튼이 생겼각.</li>
             <li><strong>사용자 ID 숨김:</strong> 사용자 ID가 화면에 안 보이게 했각.</li>
-            <li><strong>각뿔봇 성격 조정:</strong> 각뿔봇이 질문에 대답하고, 베이스를 싫어하도록 만들었각.</li>
+            <li><strong>대화 내용 기억 기능 추가:</strong> SessionStorage를 사용하여 브라우저 세션 동안 대화 내용을 기억하도록 구현했각.</li>
+            <li><strong>Gemini API 연동:</strong> 묻는 말에 대답하고, '베이스'에 대한 부정적인 인식을 가지도록 Gemini API 프롬프트를 조정했각.</li>
         </ul>
         <!-- 여기에 새로운 변경 사항을 추가하세요. -->
     </div>
@@ -197,12 +177,12 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v27
+            v22
         </div>
 
         <!-- Chat messages container -->
         <!-- Adjusted pt-24 to accommodate the new menu button and dropdown -->
-        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 flex flex-col space-y-3 relative z-10">
+        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 mb-4 flex flex-col space-y-3 relative z-10">
             <div id="initial-message" class="text-center text-gray-500 mt-10">
                 각뿔봇에게 말을 걸어보각.
             </div>
@@ -316,9 +296,9 @@
         const messagesEndRef = document.getElementById('messages-end-ref');
 
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
-        const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
+        const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile'; // LocalStorage 키 정의
         let chatHistoryInMemory = [];
-        let currentProfileData = { name: '', bio: '' };
+        let currentProfileData = { name: '', bio: '' }; // 프로필 데이터 저장
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
