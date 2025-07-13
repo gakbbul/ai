@@ -129,6 +129,10 @@
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <!-- This div will now serve as a default/fallback if Firestore is not available or empty -->
     <div id="changelog-data" class="hidden">
+        <h2>v37</h2>
+        <ul>
+            <li><strong>API 키 직접 적용:</strong> 사용자로부터 받은 API 키를 코드에 직접 적용했각.</li>
+        </ul>
         <h2>v28</h2>
         <ul>
             <li><strong>변경 사항 직접 편집 기능 추가:</strong> 이제 비밀번호를 입력하면 '변경 사항' 내용을 직접 수정하고 저장할 수 있각.</li>
@@ -164,7 +168,7 @@
         <h2>v22</h2>
         <ul>
             <li><strong>프로필 기능 추가:</strong> 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 프로필 기능이 생겼각.</li>
-            <li><strong>개인화된 답변:아</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
+            <li><strong>개인화된 답변:</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
             <li><strong>프로필 정보 저장 방식 변경:</strong> 프로필 정보는 이제 브라우저를 닫아도 사라지지 않고 기억될 거각. 대화 기록은 여전히 브라우저 탭을 닫으면 사라져각.</li>
             <li><strong>버전 업데이트:</strong> `v21`에서 `v22`로 변경했각.</li>
         </ul>
@@ -260,7 +264,7 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v28
+            v37
         </div>
 
         <!-- User ID Display -->
@@ -654,7 +658,8 @@
                     },
                 };
 
-                const apiKey = ""; // Canvas will provide this at runtime if empty
+                // Use the API key provided by the user
+                const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
