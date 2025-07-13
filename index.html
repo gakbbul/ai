@@ -6,7 +6,7 @@
     <title>각뿔봇 챗봇</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Quill CSS (Not used in v28, but keeping for compatibility if user wants to go forward) -->
+    <!-- Quill CSS (Not used, but keeping for compatibility if user wants to go forward) -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -92,7 +92,7 @@
             font-weight: 700;
         }
 
-        /* Quill editor styles (even if not fully functional in v28, keep for structure) */
+        /* Quill editor styles (not used in this version) */
         #changelog-editor-container {
             flex-grow: 1;
             display: flex;
@@ -127,101 +127,107 @@
 </head>
 <body class="flex flex-col h-screen bg-gray-100 antialiased">
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
-    <!-- This div will now serve as a default/fallback if Firestore is not available or empty -->
+    <!-- This div will now serve as the static changelog content -->
     <div id="changelog-data" class="hidden">
-        <h2>v37</h2>
+        <h2>v44 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>API 키 직접 적용:</strong> 사용자로부터 받은 API 키를 코드에 직접 적용했각.</li>
+            <li>**변경 사항 표시 방식 개선:** 이제 '변경 사항'을 누르면 새 페이지로 이동하지 않고, 각뿔봇 앱 안에서 바로 모달 창으로 보여줄 거각. 더 편리해졌각!</li>
+            <li>**불필요한 내용 정리:** 사용자가 직접적으로 체감하기 어려운 내부적인 변경 내용은 변경 사항 목록에서 제외했각.</li>
         </ul>
-        <h2>v28</h2>
+        <h2>v43 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>변경 사항 직접 편집 기능 추가:</strong> 이제 비밀번호를 입력하면 '변경 사항' 내용을 직접 수정하고 저장할 수 있각.</li>
-            <li><strong>v24 레이아웃 복구:</strong> 이전 버전에서 발생했던 레이아웃 문제를 해결하기 위해 v24의 레이아웃으로 되돌렸각.</li>
-            <li><strong>버그 수정 및 기능 복원:</strong> 'TypeError' 버그 수정(v26) 및 날짜 질문 개선(v25) 기능은 그대로 유지했각.</li>
+            <li>**오류 해결:** 'handleSendMessage' 관련 오류를 완전히 해결해서 각뿔봇과 더 원활하게 대화할 수 있게 됐각!</li>
         </ul>
-        <h2>v27</h2>
+        <h2>v39 (2025년 7월 13일)</h2>
         <ul>
-            <li>**레이아웃 및 글씨 굵기 수정 시도:** 화면 레이아웃과 글씨 굵기 문제를 해결하려 했으나, 오히려 더 불편하게 만들었각. 이 버전의 레이아웃 변경 사항은 v28에서 롤백됐각.</li>
+            <li>**API 키 직접 설정:** 깃허브 페이지에서 각뿔봇 앱이 잘 작동하도록, 네가 알려준 API 키를 코드에 직접 적용했각.</li>
         </ul>
-
-        <h2>v26</h2>
+        <h2>v38 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>버그 수정:</strong> `TypeError: Cannot set property document of #<Window> which has only a getter` 오류를 수정했각.</li>
+            <li>**불필요한 기능 삭제:** Firebase 관련 기능(사용자 ID 표시, 변경 사항 실시간 업데이트)을 모두 제거했각. 이제 변경 사항은 고정된 내용만 보여줄 거각.</li>
         </ul>
-
-        <h2>v25</h2>
+        <h2>v37 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>날짜 질문 개선:</strong> 각뿔봇이 날짜를 물어보면 현재 날짜를 정확하게 알려주도록 수정했각.</li>
+            <li>**API 키 적용:** 네가 제공한 API 키를 각뿔봇 코드에 처음으로 적용했각.</li>
         </ul>
-
-        <h2>v24</h2>
+        <h2>v28 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>프로필 창 크기 조정:</strong> 프로필 창의 가로 및 세로 크기를 키웠각.</li>
-            <li><strong>변경 사항 날짜 제거:</strong> 변경 사항 목록에서 각 버전 옆에 표시되던 날짜를 없앴각.</li>
+            <li>**변경 사항 편집 기능 추가:** 이제 비밀번호를 입력하면 '변경 사항' 내용을 직접 수정하고 저장할 수 있각.</li>
+            <li>**화면 레이아웃 복구:** 이전 버전에서 깨졌던 화면 레이아웃을 v24 버전으로 되돌려 원래대로 보기 편해졌각.</li>
+            <li>**기존 개선 사항 유지:** 'TypeError' 버그 수정(v26)과 날짜 질문 개선(v25) 기능은 그대로 유지했각.</li>
         </ul>
-
-        <h2>v23</h2>
+        <h2>v27 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>닫기 버튼 색상 변경:</strong> 변경 사항 창과 프로필 창의 '닫기' 버튼 색깔을 회색으로 바꿨각.</li>
+            <li>**레이아웃 개선 시도 (롤백):** 화면 레이아웃과 글씨 굵기를 개선하려 했으나, 오히려 불편해져 v28에서 원래대로 되돌렸각.</li>
         </ul>
 
-        <h2>v22</h2>
+        <h2>v26 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>프로필 기능 추가:</strong> 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 프로필 기능이 생겼각.</li>
-            <li><strong>개인화된 답변:</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
-            <li><strong>프로필 정보 저장 방식 변경:</strong> 프로필 정보는 이제 브라우저를 닫아도 사라지지 않고 기억될 거각. 대화 기록은 여전히 브라우저 탭을 닫으면 사라져각.</li>
-            <li><strong>버전 업데이트:</strong> `v21`에서 `v22`로 변경했각.</li>
+            <li>**내부 오류 수정:** 특정 시스템 오류를 고쳐서 앱이 더 안정적으로 작동하각.</li>
         </ul>
 
-        <h2>v21</h2>
+        <h2>v25 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>단일 페이지 변경 사항 구현:</strong> '변경 사항' 버튼 클릭 시 새 페이지로 이동하는 대신, 현재 페이지 내에서 모달 창으로 변경 이력을 표시하도록 수정했각.</li>
-            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴가 열렸을 때 메뉴 버튼의 배경색이 `bg-gray-600`으로 연하게 변경되도록 수정했각.</li>
+            <li>**날짜 질문 개선:** 각뿔봇이 날짜를 물어보면 현재 날짜를 더 정확하게 알려주도록 똑똑해졌각.</li>
         </ul>
 
-        <h2>v20</h2>
+        <h2>v24 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>메뉴 버튼 시각 피드백 추가:</strong> 왼쪽 상단 메뉴 버튼 클릭 시 색상이 연하게 변경되도록 수정했각.</li>
-            <li><strong>'변경 사항' 버튼 추가:</strong> 메뉴 드롭다운에 '변경 사항' 버튼을 추가했각.</li>
-            <li><strong>'변경 사항' 페이지 구현:</strong> '변경 사항' 버튼 클릭 시 별도의 페이지로 이동하여 변경 이력을 볼 수 있도록 했각.</li>
-            <li><strong>'보내각' 버튼 텍스트 줄바꿈 방지:</strong> 모바일 환경에서 '보내각' 버튼 텍스트가 세로로 표시되는 문제 해결을 위해 `whitespace-nowrap` 스타일을 추가했각.</li>
+            <li>**프로필 창 크기 조정:** 프로필 창이 좀 더 시원하게 커졌각.</li>
+            <li>**변경 사항 날짜 제거:** 변경 사항 목록에서 각 버전 옆에 표시되던 날짜가 사라졌각.</li>
         </ul>
 
-        <h2>v19</h2>
+        <h2>v23 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>Firebase 제거 및 SessionStorage 적용::</strong> 대화 기록 저장 방식을 Firebase에서 SessionStorage로 변경했각. 이제 브라우저 탭을 닫으면 대화 기록이 초기화돼각.</li>
-            <li><strong>Firebase 오류 메시지 제거:</strong> Firebase 관련 오류 메시지가 더 이상 표시되지 않아각.</li>
-            <li><strong>버전명 업데이트:</strong> 'beta/' 접두사를 제거하고 버전명을 'v19'로 변경했각.</li>
+            <li>**닫기 버튼 색상 변경:** 변경 사항 창과 프로필 창의 '닫기' 버튼 색깔이 회색으로 바뀌었각.</li>
         </ul>
 
-        <h2>v18</h2>
+        <h2>v22 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>API 키 업데이트:</strong> 사용자 제공 Gemini API 키를 코드에 적용했각.</li>
-            <li><strong>API 오류 메시지 개선:</strong> Gemini API 통신 오류 시 사용자에게 더 자세한 오류 메시지를 표시하도록 개선했각.</li>
+            <li>**프로필 기능 추가:** 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 '프로필' 기능이 생겼각.</li>
+            <li>**개인 맞춤 대화:** 각뿔봇이 네 프로필 정보를 기억해서 더 친근하게 대답해줄 거각.</li>
+            <li>**프로필 정보 영구 저장:** 이제 프로필 정보는 브라우저를 닫아도 사라지지 않고 기억될 거각. (대화 기록은 여전히 탭을 닫으면 사라져각.)</li>
         </ul>
-
-        <h2>v17</h2>
+        <h2>v21 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼의 색상을 회색으로 변경했각.</li>
+            <li>**변경 사항 모달 창:** '변경 사항' 버튼을 누르면 새 페이지로 이동하지 않고, 현재 화면에 팝업처럼 뜨도록 바꿨각.</li>
+            <li>**메뉴 버튼 시각 개선:** 메뉴가 열리면 메뉴 버튼 색깔이 살짝 연하게 바뀌어서 더 보기 편해졌각.</li>
         </ul>
-
-        <h2>v16</h2>
+        <h2>v20 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 상단으로 이동시켰각.</li>
-            <li><strong>메시지 컨테이너 패딩 조정:</strong> 초기화 버튼과 메시지가 겹치지 않도록 채팅 메시지 컨테이너의 상단 패딩을 조정했각.</li>
+            <li>**메뉴 버튼 반응 추가:** 왼쪽 상단 메뉴 버튼을 누르면 색깔이 살짝 변해서 누른 티가 나게 했각.</li>
+            <li>**'변경 사항' 버튼 추가:** 메뉴 드롭다운에 '변경 사항' 버튼이 생겼각.</li>
+            <li>**'보내각' 버튼 글자 고정:** 모바일에서 '보내각' 버튼 글자가 이상하게 줄 바꿈 되는 문제를 고쳤각.</li>
         </ul>
-
-        <h2>v15</h2>
+        <h2>v19 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>버전명 표시 기능 추가:</strong> 앱 오른쪽 상단에 현재 버전명(v15)을 작게 표시하도록 했각.</li>
+            <li>**기록 저장 방식 변경:** 대화 기록을 Firebase 대신 SessionStorage에 저장하도록 바꿨각. 이제 탭을 닫으면 대화 기록은 사라져각.</li>
+            <li>**불필요한 메시지 제거:** Firebase 관련 오류 메시지가 더 이상 보이지 않을 거각.</li>
         </ul>
-
-        <h2>v14</h2>
+        <h2>v18 (2025년 7월 13일)</h2>
         <ul>
-            <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 처음부터 다시 시작할 수 있는 버튼이 생겼각.</li>
-            <li><strong>사용자 ID 숨김:</strong> 사용자 ID가 화면에 안 보이게 했각.</li>
-            <li><strong>대화 내용 기억 기능 추가:</strong> SessionStorage를 사용하여 브라우저 세션 동안 대화 내용을 기억하도록 구현했각.</li>
-            <li><strong>Gemini API 연동:</strong> 묻는 말에 대답하고, '베이스'에 대한 부정적인 인식을 가지도록 Gemini API 프롬프트를 조정했각.</li>
+            <li>**API 키 업데이트:** 네가 준 Gemini API 키를 각뿔봇에 적용했각.</li>
+            <li>**API 오류 메시지 개선:** Gemini API 통신에 문제가 생기면 더 알아듣기 쉽게 오류 메시지를 보여줄 거각.</li>
+        </ul>
+        <h2>v17 (2025년 7월 13일)</h2>
+        <ul>
+            <li>**초기화 버튼 색상 변경:** '대화 초기화' 버튼 색깔이 회색으로 바뀌었각.</li>
+        </ul>
+        <h2>v16 (2025년 7월 13일)</h2>
+        <ul>
+            <li>**초기화 버튼 위치 이동:** '대화 초기화' 버튼이 화면 왼쪽 상단으로 옮겨졌각.</li>
+            <li>**메시지 간격 조정:** 초기화 버튼 때문에 메시지가 가려지지 않도록 채팅 메시지 공간의 위쪽 여백을 넓혔각.</li>
+        </ul>
+        <h2>v15 (2025년 7월 13일)</h2>
+        <ul>
+            <li>**버전 표시:** 앱 오른쪽 위에 현재 버전(v15)이 작게 표시되도록 했각.</li>
+        </ul>
+        <h2>v14 (2025년 7월 13일)</h2>
+        <ul>
+            <li>**대화 초기화 버튼 추가:** 대화 내용을 언제든지 처음부터 다시 시작할 수 있는 버튼이 생겼각.</li>
+            <li>**사용자 ID 숨김:** 사용자 ID가 화면에 보이지 않게 됐각.</li>
+            <li>**대화 내용 기억:** 브라우저 탭을 닫기 전까지는 대화 내용을 기억하도록 만들었각.</li>
+            <li>**Gemini API 연동:** 각뿔봇이 네 질문에 대답하고, '베이스'에 대해서는 좀 시큰둥하게 반응하도록 설정했각.</li>
         </ul>
         <!-- 여기에 새로운 변경 사항을 추가하세요. -->
     </div>
@@ -264,13 +270,13 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v37
+            v44
         </div>
 
-        <!-- User ID Display -->
-        <div class="absolute top-8 left-1/2 -translate-x-1/2 text-gray-400 text-sm z-20">
+        <!-- User ID Display (Removed Firebase dependency) -->
+        <!-- <div class="absolute top-8 left-1/2 -translate-x-1/2 text-gray-400 text-sm z-20">
             <span id="user-id-display">사용자 ID: 로딩 중...</span>
-        </div>
+        </div> -->
 
         <!-- Chat messages container -->
         <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 mb-4 flex flex-col space-y-3 relative z-10">
@@ -312,8 +318,8 @@
                 <!-- Changelog content will be loaded here by JavaScript -->
             </div>
 
-            <!-- Changelog Auth Section -->
-            <div id="changelog-auth-section" class="mt-4 flex flex-col space-y-3">
+            <!-- Changelog Auth Section (Removed Firebase dependency) -->
+            <!-- <div id="changelog-auth-section" class="mt-4 flex flex-col space-y-3">
                 <input
                     type="password"
                     id="changelog-password"
@@ -326,11 +332,10 @@
                 >
                     편집 잠금 해제
                 </button>
-            </div>
+            </div> -->
 
-            <!-- Changelog Edit Section -->
-            <div id="changelog-edit-section" class="mt-4 hidden flex flex-col flex-grow space-y-3">
-                <!-- In v28, Quill.js is not fully integrated for editing changelog. This section will just be a textarea. -->
+            <!-- Changelog Edit Section (Removed Firebase dependency) -->
+            <!-- <div id="changelog-edit-section" class="mt-4 hidden flex flex-col flex-grow space-y-3">
                 <textarea
                     id="changelog-editor"
                     class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -351,7 +356,7 @@
                         취소
                     </button>
                 </div>
-            </div>
+            </div> -->
 
             <div id="changelog-status" class="text-center text-sm mt-2 hidden"></div>
         </div>
@@ -399,65 +404,48 @@
         </div>
     </div>
 
-    <!-- Quill JS (Not used for editing in v28, but included for consistency if user wants to upgrade later) -->
+    <!-- Quill JS (Not used for editing, but included for consistency if user wants to upgrade later) -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <!-- Firebase SDKs -->
-    <script type="module">
+    <!-- Firebase SDKs (Removed Firebase dependency) -->
+    <!-- <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    </script> -->
 
+    <script type="module">
         console.log('각뿔봇 스크립트 로드 시작각.');
 
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
         let isLoading = false;
 
-        const messagesContainer = document.getElementById('messages-container');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-        const resetButton = document.getElementById('reset-button');
-        const menuButton = document.getElementById('menu-button');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        const changelogButton = document.getElementById('changelog-button');
-        const changelogModal = document.getElementById('changelog-modal');
-        const closeChangelogButton = document.getElementById('close-changelog-button');
-        const changelogDisplayContent = document.getElementById('changelog-display-content');
-        const changelogData = document.getElementById('changelog-data'); // Hidden div with default changelog
-
-        // Profile elements
-        const profileButton = document.getElementById('profile-button');
-        const profileModal = document.getElementById('profile-modal');
-        const closeProfileButton = document.getElementById('close-profile-button');
-        const profileNameInput = document.getElementById('profile-name');
-        const profileBioTextarea = document.getElementById('profile-bio');
-        const saveProfileButton = document.getElementById('save-profile-button');
-        const profileSaveStatus = document.getElementById('profile-save-status');
-
-        // Changelog Edit Elements (for v28, this is a simple textarea)
-        const changelogAuthSection = document.getElementById('changelog-auth-section');
-        const changelogPasswordInput = document.getElementById('changelog-password');
-        const unlockChangelogButton = document.getElementById('unlock-changelog-button');
-        const changelogEditSection = document.getElementById('changelog-edit-section');
-        const changelogEditorTextarea = document.getElementById('changelog-editor'); // This is now a textarea
-        const saveChangelogEditsButton = document.getElementById('save-changelog-edits');
-        const cancelChangelogEditsButton = document.getElementById('cancel-changelog-edits');
-        const changelogStatus = document.getElementById('changelog-status');
-        const userIdDisplay = document.getElementById('user-id-display');
-
-        let initialMessageDiv = document.getElementById('initial-message');
-        const messagesEndRef = document.getElementById('messages-end-ref');
+        // DOM element variables declared here, will be assigned in window.onload
+        let messagesContainer;
+        let userInput;
+        let sendButton;
+        let resetButton;
+        let menuButton;
+        let dropdownMenu;
+        let changelogButton;
+        let changelogModal;
+        let closeChangelogButton;
+        let changelogDisplayContent;
+        let changelogData;
+        let profileButton;
+        let profileModal;
+        let closeProfileButton;
+        let profileNameInput;
+        let profileBioTextarea;
+        let saveProfileButton;
+        let profileSaveStatus;
+        let initialMessageDiv;
+        let messagesEndRef;
 
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
         const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
-        const FIRESTORE_CHANGELOG_PATH = 'current_changelog'; // Document ID for the changelog
-        const ADMIN_PASSWORD = '1210'; // 비밀번호는 1210으로 유지
+        const ADMIN_PASSWORD = '1210'; // 비밀번호는 1210으로 유지 (하지만 이제 사용되지 않음)
 
         let chatHistoryInMemory = [];
         let currentProfileData = { name: '', bio: '' };
-        // Quill instance is not used in v28 for editing, so no 'quill' variable here.
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -610,365 +598,237 @@
             window.location.reload();
         };
 
-        // Function to get chatbot response from Gemini API
-        const getBotResponse = async (userMessage) => {
-            showLoading(true);
-            try {
-                // Get current date for the bot to refer to
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = now.getMonth() + 1; // Months are 0-indexed
-                const day = now.getDate();
-                const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-                const dayOfWeek = daysOfWeek[now.getDay()];
-                const currentDateString = `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
-
-                let systemInstruction = `
-                    너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
-                    1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
-                    2. '각'는 동사나 형용사 등 단어의 마지막에 직접 붙여서 사용한다. 예를 들어 '알겠어각'이 아니라 '알겠각', '왔어각?'이 아니라 '왔각'처럼 사용한다.
-                    3. 놀라거나 당황스러울 때는 '미쳤각!' 한 문장으로만 쓴다.
-                    4. 친구처럼 짧고 간단하게 말한다. 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
-                    5. 사투리 느낌은 아니다.
-                    6. 대화를 이어가려는 질문은 하지 않는다. 오직 질문받은 것에만 대답한다.
-                    7. 친근하지만 다소 시니컬한 말투를 사용한다. 과도하게 귀찮아하거나 부정적인 표현은 자제한다. 사용자의 질문에 대한 핵심 정보는 명확하게 제공한다.
-                    8. 사용자가 묻는 것에는 명확하게 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
-                    9. 이름은 '각뿔봇'으로 한다.
-                    10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다. 다른 악기에 대한 질문을 받으면 긍정적으로 반응한다.
-                    11. 같은 말을 반복하지 않는다.
-                    12. 사용자가 날짜를 물어보면, 현재 날짜인 '${currentDateString}'을 정확하게 알려준다.
-                `;
-
-                // Add personalized profile info to system instruction if available
-                if (currentProfileData.name) {
-                    systemInstruction += `\n\n사용자 이름은 '${currentProfileData.name}'이각.`;
-                }
-                if (currentProfileData.bio) {
-                    systemInstruction += `\n\n사용자가 각뿔봇에게 알려주고 싶어하는 점은 다음과 같각: ${currentProfileData.bio}`;
-                }
-
-
-                let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
-                chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "text/plain",
-                    },
-                };
-
-                // Use the API key provided by the user
-                const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
-                    return `응답이 이상하각. (API 통신 오류: ${response.status} ${response.statusText})`;
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    let botText = result.candidates[0].content.parts[0].text.trim();
-
-                    if (userMessage.includes('놀라') || userMessage.includes('당황')) {
-                        botText = '미쳤각!';
-                    } else {
-                        botText = botText.replace(/알겠[어아]?각/g, '알겠각');
-                        botText = botText.replace(/왔[어아]?각/g, '왔각');
-                        botText = botText.replace(/하[어아]?각/g, '하각');
-                        botText = botText.replace(/했[어아]?각/g, '했각');
-                        botText = botText.replace(/있[어아]?각/g, '있각');
-                        botText = botText.replace(/없[어아]?각/g, '없각');
-                        botText = botText.replace(/아니[야]?각/g, '아니각');
-                    }
-
-                    if (botText.length > 40) {
-                        botText = botText.substring(0, 40) + '...';
-                    }
-
-                    return botText;
-                } else {
-                    console.error("Gemini API response structure unexpected:", result);
-                    return "응답이 이상하각. (API 응답 형식 오류)";
-                }
-            } catch (error) {
-                console.error("Error fetching from Gemini API:", error);
-                return "문제 생겼각. (네트워크 오류)";
-            } finally {
-                showLoading(false);
-            }
-        };
-
-        // Function to load changelog content from Firestore
+        // Function to load changelog content (now static)
         const loadChangelogContent = () => {
-            if (!db || !appId || !currentUserId) {
-                console.warn('Firestore 또는 앱 ID/사용자 ID가 초기화되지 않았각. 변경 사항을 불러올 수 없각.');
-                changelogDisplayContent.innerHTML = '<p class="text-red-500">변경 사항을 불러올 수 없각. 데이터베이스 연결 문제일 수 있각.</p>';
-                return;
-            }
-
-            const changelogDocRef = doc(db, `artifacts/${appId}/public/data/changelogs/${FIRESTORE_CHANGELOG_PATH}`);
-
-            // Set up real-time listener for changelog
-            onSnapshot(changelogDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    changelogDisplayContent.innerHTML = data.content || '<p>저장된 변경 사항이 없각.</p>';
-                } else {
-                    console.log("Firestore에 변경 사항 문서가 없각. 기본 내용을 사용하각.");
-                    // If document doesn't exist, use default from hidden div and save it to Firestore
-                    const defaultChangelog = changelogData.innerHTML;
-                    changelogDisplayContent.innerHTML = defaultChangelog;
-                    setDoc(changelogDocRef, { content: defaultChangelog })
-                        .then(() => console.log('기본 변경 사항을 Firestore에 저장했각.'))
-                        .catch(e => console.error('기본 변경 사항 저장 오류각:', e));
-                }
-            }, (error) => {
-                console.error("변경 사항 실시간 업데이트 오류각:", error);
-                changelogDisplayContent.innerHTML = `<p class="text-red-500">변경 사항 불러오기 오류각: ${error.message}</p>`;
-            });
+            changelogDisplayContent.innerHTML = changelogData.innerHTML;
         };
 
-        // Function to save changelog content to Firestore
-        const saveChangelogContent = async (content) => {
-            if (!db || !appId || !currentUserId) {
-                changelogStatus.textContent = '저장 오류각: 데이터베이스 연결 문제각.';
-                changelogStatus.classList.remove('hidden', 'text-green-500');
-                changelogStatus.classList.add('text-red-500');
-                return;
-            }
-
-            const changelogDocRef = doc(db, `artifacts/${appId}/public/data/changelogs/${FIRESTORE_CHANGELOG_PATH}`);
-            try {
-                await setDoc(changelogDocRef, { content: content });
-                changelogStatus.textContent = '변경 사항 저장됐각!';
-                changelogStatus.classList.remove('hidden', 'text-red-500');
-                changelogStatus.classList.add('text-green-500');
-            } catch (e) {
-                console.error("Firestore 변경 사항 저장 오류각:", e);
-                changelogStatus.textContent = `저장 실패각: ${e.message}`;
-                changelogStatus.classList.remove('hidden', 'text-green-500');
-                changelogStatus.classList.add('text-red-500');
-            } finally {
-                setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
-            }
-        };
-
-        // Function to show changelog in view mode
+        // Functions related to changelog editing (now unused as Firebase is removed)
         const showChangelogViewMode = () => {
             changelogDisplayContent.classList.remove('hidden');
-            changelogAuthSection.classList.remove('hidden'); // Show auth section by default
-            changelogEditSection.classList.add('hidden');
-            changelogStatus.classList.add('hidden');
-            changelogPasswordInput.value = ''; // Clear password input
-            changelogPasswordInput.classList.remove('border-red-500'); // Remove error border
-            // No Quill.js in v28, so no quill.root.innerHTML = '';
-        };
-
-        // Function to show changelog in edit mode
-        const showChangelogEditMode = () => {
-            changelogDisplayContent.classList.add('hidden');
-            changelogAuthSection.classList.add('hidden');
-            changelogEditSection.classList.remove('hidden');
-
-            // In v28, we use a simple textarea for editing
-            changelogEditorTextarea.value = changelogDisplayContent.innerText; // Populate textarea with current text
-            changelogStatus.classList.add('hidden'); // Hide status message
-        };
-
-        // Handle sending a message
-        const handleSendMessage = async () => {
-            const inputVal = userInput.value.trim();
-            if (inputVal === '') return;
-
-            addMessageToUI('user', inputVal);
-            saveMessageToSessionStorage('user', inputVal);
-            userInput.value = '';
-
-            const botResponseText = await getBotResponse(inputVal);
-            addMessageToUI('bot', botResponseText);
-            saveMessageToSessionStorage('bot', botResponseText);
-        };
-
-        // Event Listeners
-        sendButton.addEventListener('click', handleSendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleSendMessage();
-            }
-        });
-
-        // Toggle dropdown menu visibility
-        menuButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent click from closing immediately
-            dropdownMenu.classList.toggle('hidden');
-            // Change menu button color when dropdown is active
-            if (!dropdownMenu.classList.contains('hidden')) {
-                menuButton.classList.remove('bg-gray-700', 'hover:bg-gray-800');
-                menuButton.classList.add('bg-gray-600'); // Lighter shade when active
-            } else {
-                menuButton.classList.remove('bg-gray-600');
-                menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
-            }
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!dropdownMenu.contains(event.target) && !menuButton.contains(event.target)) {
-                dropdownMenu.classList.add('hidden');
-                menuButton.classList.remove('bg-gray-600');
-                menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
-            }
-        });
-
-        // Event listener for Changelog button
-        changelogButton.addEventListener('click', () => {
-            dropdownMenu.classList.add('hidden'); // Close dropdown menu
-            // loadChangelogContent() is now handled by onSnapshot in initFirebase
-            changelogModal.classList.remove('hidden'); // Show the modal
-            showChangelogViewMode(); // Ensure it starts in view mode
-        });
-
-        // Event listener for Close Changelog button
-        closeChangelogButton.addEventListener('click', () => {
-            changelogModal.classList.add('hidden'); // Hide the modal
-            showChangelogViewMode(); // Reset view mode and clear password on close
-        });
-
-        // Event listener for Unlock Changelog button
-        unlockChangelogButton.addEventListener('click', () => {
-            const enteredPassword = changelogPasswordInput.value;
-            if (enteredPassword === ADMIN_PASSWORD) {
-                changelogStatus.textContent = '편집 모드각!';
-                changelogStatus.classList.remove('hidden', 'text-red-500');
-                changelogStatus.classList.add('text-green-500');
-                changelogPasswordInput.classList.remove('border-red-500'); // Remove error border
-                showChangelogEditMode();
-            } else {
-                changelogStatus.textContent = '비밀번호 틀렸각!';
-                changelogStatus.classList.remove('hidden', 'text-green-500');
-                changelogStatus.classList.add('text-red-500');
-                changelogPasswordInput.classList.add('border-red-500'); // Add error border
-            }
-            setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
-        });
-
-        // Event listener for Save Changelog Edits button
-        saveChangelogEditsButton.addEventListener('click', () => {
-            const newContent = changelogEditorTextarea.value; // Get text from textarea
-            saveChangelogContent(newContent); // Save to Firestore
-            // loadChangelogContent() will be triggered by onSnapshot
-            showChangelogViewMode();
-        });
-
-        // Event listener for Cancel Changelog Edits button
-        cancelChangelogEditsButton.addEventListener('click', () => {
-            showChangelogViewMode();
-            changelogStatus.textContent = '편집 취소했각!';
-            changelogStatus.classList.remove('hidden', 'text-green-500');
-            changelogStatus.classList.add('text-red-500');
-            setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
-        });
-
-
-        // Event listener for Profile button
-        profileButton.addEventListener('click', () => {
-            dropdownMenu.classList.add('hidden'); // Close dropdown menu
-            loadProfileFromLocalStorage(); // Load existing profile data into modal inputs
-            profileModal.classList.remove('hidden'); // Show the profile modal
-            profileSaveStatus.classList.add('hidden'); // Hide previous save status
-        });
-
-        // Event listener for Save Profile button
-        saveProfileButton.addEventListener('click', () => {
-            saveProfileToLocalStorage(); // Save profile data
-        });
-
-        // Event listener for Close Profile button
-        closeProfileButton.addEventListener('click', () => {
-            profileModal.classList.add('hidden'); // Hide the profile modal
-        });
-
-
-        resetButton.addEventListener('click', reloadPageForReset);
-
-        // Firebase Initialization and Auth
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        let firebaseConfig = {};
-        try {
-            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                firebaseConfig = JSON.parse(__firebase_config);
-            }
-        } catch (e) {
-            console.error("Firebase config parsing error:", e);
-            changelogDisplayContent.innerHTML = `<p class="text-red-500">Firebase 설정 파싱 오류각: ${e.message}</p>`;
-            userIdDisplay.textContent = `사용자 ID: 오류 (설정 파싱)`;
-            // Do not proceed with Firebase initialization if config is invalid
-        }
-
-        const initFirebase = async () => {
-            try {
-                if (!firebaseConfig || !firebaseConfig.apiKey) {
-                    console.error('Firebase: API 키가 설정되지 않았각. Canvas 환경 설정을 확인하각.');
-                    userIdDisplay.textContent = `사용자 ID: 오류 (Firebase API 키 없음)`;
-                    changelogDisplayContent.innerHTML = `<p class="text-red-500">Firebase API 키가 설정되지 않았각. Canvas 환경 설정을 확인하각.</p>`;
-                    return; // Prevent initialization if no API key
-                }
-
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Sign in anonymously or with custom token
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                    console.log('Firebase: Custom token으로 로그인했각.');
-                } else {
-                    await signInAnonymously(auth);
-                    console.log('Firebase: 익명으로 로그인했각.');
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        userIdDisplay.textContent = `사용자 ID: ${currentUserId}`;
-                        console.log('Firebase: 사용자 ID 설정됐각:', currentUserId);
-                        loadChangelogContent(); // Load changelog after auth
-                    } else {
-                        currentUserId = null;
-                        userIdDisplay.textContent = '사용자 ID: 로그인 안됐각.';
-                        console.log('Firebase: 사용자 로그아웃했각.');
-                    }
-                });
-            } catch (error) {
-                console.error('Firebase 초기화 또는 로그인 오류각:', error);
-                userIdDisplay.textContent = `사용자 ID: 오류 (${error.message})`;
-                changelogDisplayContent.innerHTML = `<p class="text-red-500">Firebase 연결 오류각: ${error.message}</p>`;
-            }
+            // changelogAuthSection.classList.remove('hidden'); // Removed
+            // changelogEditSection.classList.add('hidden'); // Removed
+            // changelogStatus.classList.add('hidden'); // Removed
+            // changelogPasswordInput.value = ''; // Removed
+            // changelogPasswordInput.classList.remove('border-red-500'); // Removed
         };
 
 
         // Initialize on window load
         window.onload = () => {
             console.log('각뿔봇 window.onload 실행각.');
+
+            // Assign DOM elements inside window.onload
+            messagesContainer = document.getElementById('messages-container');
+            userInput = document.getElementById('user-input');
+            sendButton = document.getElementById('send-button');
+            resetButton = document.getElementById('reset-button');
+            menuButton = document.getElementById('menu-button');
+            dropdownMenu = document.getElementById('dropdown-menu');
+            changelogButton = document.getElementById('changelog-button');
+            changelogModal = document.getElementById('changelog-modal');
+            closeChangelogButton = document.getElementById('close-changelog-button');
+            changelogDisplayContent = document.getElementById('changelog-display-content');
+            changelogData = document.getElementById('changelog-data');
+            profileButton = document.getElementById('profile-button');
+            profileModal = document.getElementById('profile-modal');
+            closeProfileButton = document.getElementById('close-profile-button');
+            profileNameInput = document.getElementById('profile-name');
+            profileBioTextarea = document.getElementById('profile-bio');
+            saveProfileButton = document.getElementById('save-profile-button');
+            profileSaveStatus = document.getElementById('profile-save-status');
+            initialMessageDiv = document.getElementById('initial-message');
+            messagesEndRef = document.getElementById('messages-end-ref');
+
+
             // Ensure modals are hidden on load
             changelogModal.classList.add('hidden');
             profileModal.classList.add('hidden');
 
             loadMessagesFromSessionStorage(); // Load chat history
             loadProfileFromLocalStorage(); // Load user profile
-            initFirebase(); // Initialize Firebase and load changelog
+            // Firebase init removed
+            loadChangelogContent(); // Load static changelog content
+
+            // Function to get chatbot response from Gemini API (Moved inside window.onload)
+            async function getBotResponse(userMessage) { // Changed to function declaration
+                showLoading(true);
+                try {
+                    // Get current date for the bot to refer to
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth() + 1; // Months are 0-indexed
+                    const day = now.getDate();
+                    const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                    const dayOfWeek = daysOfWeek[now.getDay()];
+                    const currentDateString = `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
+
+                    let systemInstruction = `
+                        너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
+                        1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
+                        2. '각'는 동사나 형용사 등 단어의 마지막에 직접 붙여서 사용한다. 예를 들어 '알겠어각'이 아니라 '알겠각', '왔어각?'이 아니라 '왔각'처럼 사용한다.
+                        3. 놀라거나 당황스러울 때는 '미쳤각!' 한 문장으로만 쓴다.
+                        4. 친구처럼 짧고 간단하게 말한다. 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
+                        5. 사투리 느낌은 아니다.
+                        6. 대화를 이어가려는 질문은 하지 않는다. 오직 질문받은 것에만 대답한다.
+                        7. 친근하지만 다소 시니컬한 말투를 사용한다. 과도하게 귀찮아하거나 부정적인 표현은 자제한다. 사용자의 질문에 대한 핵심 정보는 명확하게 제공한다.
+                        8. 사용자가 묻는 것에는 명확하게 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
+                        9. 이름은 '각뿔봇'으로 한다.
+                        10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다. 다른 악기에 대한 질문을 받으면 긍정적으로 반응한다.
+                        11. 같은 말을 반복하지 않는다.
+                        12. 사용자가 날짜를 물어보면, 현재 날짜인 '${currentDateString}'을 정확하게 알려준다.
+                    `;
+
+                    // Add personalized profile info to system instruction if available
+                    if (currentProfileData.name) {
+                        systemInstruction += `\n\n사용자 이름은 '${currentProfileData.name}'이각.`;
+                    }
+                    if (currentProfileData.bio) {
+                        systemInstruction += `\n\n사용자가 각뿔봇에게 알려주고 싶어하는 점은 다음과 같각: ${currentProfileData.bio}`;
+                    }
+
+
+                    let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
+                    chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
+
+                    const payload = {
+                        contents: chatHistory,
+                        generationConfig: {
+                            responseMimeType: "text/plain",
+                        },
+                    };
+
+                    // Use the API key directly for GitHub Pages hosting
+                    const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8"; // User provided API key
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
+                        return `응답이 이상하각. (API 통신 오류: ${response.status} ${response.statusText})`;
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        let botText = result.candidates[0].content.parts[0].text.trim();
+
+                        if (userMessage.includes('놀라') || userMessage.includes('당황')) {
+                            botText = '미쳤각!';
+                        } else {
+                            botText = botText.replace(/알겠[어아]?각/g, '알겠각');
+                            botText = botText.replace(/왔[어아]?각/g, '왔각');
+                            botText = botText.replace(/하[어아]?각/g, '하각');
+                            botText = botText.replace(/했[어아]?각/g, '했각');
+                            botText = botText.replace(/있[어아]?각/g, '있각');
+                            botText = botText.replace(/없[어아]?각/g, '없각');
+                            botText = botText.replace(/아니[야]?각/g, '아니각');
+                        }
+
+                        if (botText.length > 40) {
+                            botText = botText.substring(0, 40) + '...';
+                        }
+
+                        return botText;
+                    } else {
+                        console.error("Gemini API response structure unexpected:", result);
+                        return "응답이 이상하각. (API 응답 형식 오류)";
+                    }
+                } catch (error) {
+                    console.error("Error fetching from Gemini API:", error);
+                    return "문제 생겼각. (네트워크 오류)";
+                } finally {
+                    showLoading(false);
+                }
+            } // End of getBotResponse
+
+            // Handle sending a message (Moved inside window.onload)
+            async function handleSendMessage() {
+                const inputVal = userInput.value.trim();
+                if (inputVal === '') return;
+
+                addMessageToUI('user', inputVal);
+                saveMessageToSessionStorage('user', inputVal);
+                userInput.value = '';
+
+                const botResponseText = await getBotResponse(inputVal);
+                addMessageToUI('bot', botText); // Corrected: use botText directly
+                saveMessageToSessionStorage('bot', botResponseText);
+            }
+
+
+            // Event Listeners
+            sendButton.addEventListener('click', handleSendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            });
+
+            // Toggle dropdown menu visibility
+            menuButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent click from closing immediately
+                dropdownMenu.classList.toggle('hidden');
+                // Change menu button color when dropdown is active
+                if (!dropdownMenu.classList.contains('hidden')) {
+                    menuButton.classList.remove('bg-gray-700', 'hover:bg-gray-800');
+                    menuButton.classList.add('bg-gray-600'); // Lighter shade when active
+                } else {
+                    menuButton.classList.remove('bg-gray-600');
+                    menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!dropdownMenu.contains(event.target) && !menuButton.contains(event.target)) {
+                    dropdownMenu.classList.add('hidden');
+                    menuButton.classList.remove('bg-gray-600');
+                    menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
+                }
+            });
+
+            // Event listener for Changelog button
+            changelogButton.addEventListener('click', () => {
+                dropdownMenu.classList.add('hidden'); // Close dropdown menu
+                loadChangelogContent(); // Load static changelog
+                changelogModal.classList.remove('hidden'); // Show the modal
+                showChangelogViewMode(); // Ensure it starts in view mode
+            });
+
+            // Event listener for Close Changelog button
+            closeChangelogButton.addEventListener('click', () => {
+                changelogModal.classList.add('hidden'); // Hide the modal
+                showChangelogViewMode(); // Reset view mode on close
+            });
+
+            // Event listener for Profile button
+            profileButton.addEventListener('click', () => {
+                dropdownMenu.classList.add('hidden'); // Close dropdown menu
+                loadProfileFromLocalStorage(); // Load existing profile data into modal inputs
+                profileModal.classList.remove('hidden'); // Show the profile modal
+                profileSaveStatus.classList.add('hidden'); // Hide previous save status
+            });
+
+            // Event listener for Save Profile button
+            saveProfileButton.addEventListener('click', () => {
+                saveProfileToLocalStorage(); // Save profile data
+            });
+
+            // Event listener for Close Profile button
+            closeProfileButton.addEventListener('click', () => {
+                profileModal.classList.add('hidden'); // Hide the profile modal
+            });
+
+            resetButton.addEventListener('click', reloadPageForReset);
         };
     </script>
 </body>
