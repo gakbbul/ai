@@ -6,12 +6,19 @@
     <title>각뿔봇 챗봇</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        html, body { /* Ensure full viewport height for both html and body */
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow: hidden; /* Prevent body scroll */
+            font-weight: 400; /* Explicitly set font-weight to normal (400) */
+            overflow: hidden; /* Prevent body scroll, flexbox will handle internal scrolling */
         }
         /* Custom styles for bouncing dots loading animation */
         .animate-bounce-dot {
@@ -44,10 +51,14 @@
             padding: 2rem;
             border-radius: 0.75rem; /* rounded-lg */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-            max-width: 95%; /* Increased width */
-            max-height: 95vh; /* Increased height */
+            width: 90vw; /* Specific width for larger screens */
+            height: 90vh; /* Specific height for larger screens */
+            max-width: 98%; /* Max width for responsiveness */
+            max-height: 98vh; /* Max height for responsiveness */
             overflow-y: auto; /* Allow scrolling within the modal content */
             position: relative;
+            display: flex; /* Make it a flex container */
+            flex-direction: column; /* Stack children vertically */
         }
         .modal-content h1 {
             font-size: 2.5rem; /* text-4xl */
@@ -73,11 +84,84 @@
         .modal-content strong {
             font-weight: 700;
         }
+
+        /* For Quill editor */
+        #changelog-editor-container {
+            flex-grow: 1; /* Allow editor to take available space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #changelog-editor {
+            flex-grow: 1; /* Editor itself takes remaining space */
+            border: 1px solid #ccc;
+            min-height: 200px; /* Minimum height for the editor */
+            background-color: #f8f8f8; /* Light background for editor */
+            padding: 1rem;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .ql-toolbar {
+            border: 1px solid #ccc; /* Add border to toolbar */
+            border-bottom: none; /* No bottom border for toolbar */
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+
+        .ql-container {
+            border: none !important; /* Quill adds its own border, override it */
+            flex-grow: 1;
+            overflow-y: auto; /* Ensure editor content is scrollable */
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100 antialiased">
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
+    <!-- This div will now serve as a default/fallback if Firestore is not available or empty -->
     <div id="changelog-data" class="hidden">
+        <h2>v31</h2>
+        <ul>
+            <li><strong>Quill.js 도구 모음 표시 문제 수정:</strong> '변경 사항' 편집 창에서 도구 모음이 보이지 않던 문제를 해결했각. 이제 글씨 굵게, 기울이기, 글씨 크기 등을 쉽게 조절할 수 있각.</li>
+        </ul>
+
+        <h2>v30</h2>
+        <ul>
+            <li><strong>수정 창 크기 확대:</strong> '변경 사항' 및 '프로필' 모달 창의 크기를 더 크게 키웠각.</li>
+            <li><strong>비밀번호 변경:</strong> 변경 사항 편집 비밀번호를 '1210'으로 바꿨각.</li>
+            <li><strong>리치 텍스트 편집기 도입:</strong> '변경 사항' 내용을 구글 문서처럼 쉽게 편집할 수 있는 리치 텍스트 편집기를 추가했각.</li>
+        </ul>
+
+        <h2>v29</h2>
+        <ul>
+            <li><strong>Firestore 연동:</strong> 변경 사항이 이제 모든 사용자에게 실시간으로 공유되도록 Firestore 데이터베이스에 저장돼각.</li>
+            <li><strong>사용자 ID 표시:</strong> 화면에 현재 사용자 ID가 표시돼각.</li>
+        </ul>
+
+        <h2>v28</h2>
+        <ul>
+            <li><strong>변경 사항 직접 편집 기능 추가:</strong> 이제 비밀번호를 입력하면 '변경 사항' 내용을 직접 수정하고 저장할 수 있각.</li>
+            <li><strong>v24 레이아웃 복구:</strong> 이전 버전에서 발생했던 레이아웃 문제를 해결하기 위해 v24의 레이아웃으로 되돌렸각.</li>
+            <li><strong>버그 수정 및 기능 복원:</strong> 'TypeError' 버그 수정(v26) 및 날짜 질문 개선(v25) 기능은 그대로 유지했각.</li>
+        </ul>
+
+        <h2>v27</h2>
+        <ul>
+            <li>**레이아웃 및 글씨 굵기 수정 시도:** 화면 레이아웃과 글씨 굵기 문제를 해결하려 했으나, 오히려 더 불편하게 만들었각. 이 버전의 레이아웃 변경 사항은 v28에서 롤백됐각.</li>
+        </ul>
+
+        <h2>v26</h2>
+        <ul>
+            <li><strong>버그 수정:</strong> `TypeError: Cannot set property document of #<Window> which has only a getter` 오류를 수정했각.</li>
+        </ul>
+
+        <h2>v25</h2>
+        <ul>
+            <li><strong>날짜 질문 개선:</strong> 각뿔봇이 날짜를 물어보면 현재 날짜를 정확하게 알려주도록 수정했각.</li>
+        </ul>
+
         <h2>v24</h2>
         <ul>
             <li><strong>프로필 창 크기 조정:</strong> 프로필 창의 가로 및 세로 크기를 키웠각.</li>
@@ -113,7 +197,7 @@
 
         <h2>v19</h2>
         <ul>
-            <li><strong>Firebase 제거 및 SessionStorage 적용:</strong> 대화 기록 저장 방식을 Firebase에서 SessionStorage로 변경했각. 이제 브라우저 탭을 닫으면 대화 기록이 초기화돼각.</li>
+            <li><strong>Firebase 제거 및 SessionStorage 적용::</strong> 대화 기록 저장 방식을 Firebase에서 SessionStorage로 변경했각. 이제 브라우저 탭을 닫으면 대화 기록이 초기화돼각.</li>
             <li><strong>Firebase 오류 메시지 제거:</strong> Firebase 관련 오류 메시지가 더 이상 표시되지 않아각.</li>
             <li><strong>버전명 업데이트:</strong> 'beta/' 접두사를 제거하고 버전명을 'v19'로 변경했각.</li>
         </ul>
@@ -188,11 +272,15 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v24
+            v31
+        </div>
+
+        <!-- User ID Display -->
+        <div class="absolute top-8 left-1/2 -translate-x-1/2 text-gray-400 text-sm z-20">
+            <span id="user-id-display">사용자 ID: 로딩 중...</span>
         </div>
 
         <!-- Chat messages container -->
-        <!-- Adjusted pt-24 to accommodate the new menu button and dropdown -->
         <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 mb-4 flex flex-col space-y-3 relative z-10">
             <div id="initial-message" class="text-center text-gray-500 mt-10">
                 각뿔봇에게 말을 걸어보각.
@@ -231,6 +319,65 @@
             <div id="changelog-display-content" class="prose max-w-none">
                 <!-- Changelog content will be loaded here by JavaScript -->
             </div>
+
+            <!-- Changelog Auth Section -->
+            <div id="changelog-auth-section" class="mt-4 flex flex-col space-y-3">
+                <input
+                    type="password"
+                    id="changelog-password"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="비밀번호를 입력하각..."
+                />
+                <button
+                    id="unlock-changelog-button"
+                    class="w-full px-6 py-3 bg-gray-600 text-white rounded-xl shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                >
+                    편집 잠금 해제
+                </button>
+            </div>
+
+            <!-- Changelog Edit Section -->
+            <div id="changelog-edit-section" class="mt-4 hidden flex flex-col flex-grow space-y-3">
+                <!-- Quill Toolbar -->
+                <div id="changelog-toolbar" class="ql-toolbar ql-snow">
+                    <span class="ql-formats">
+                        <select class="ql-header">
+                            <option value="1"></option>
+                            <option value="2"></option>
+                            <option value="false"></option>
+                        </select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </div>
+                <div id="changelog-editor" class="flex-grow"></div>
+                <div class="flex justify-end space-x-3">
+                    <button
+                        id="save-changelog-edits"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                    >
+                        저장
+                    </button>
+                    <button
+                        id="cancel-changelog-edits"
+                        class="px-6 py-3 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus-ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                    >
+                        취소
+                    </button>
+                </div>
+            </div>
+
+            <div id="changelog-status" class="text-center text-sm mt-2 hidden"></div>
         </div>
     </div>
 
@@ -276,9 +423,19 @@
         </div>
     </div>
 
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Firebase SDKs -->
     <script type="module">
-        console.log('각뿔봇 스크립트 로드 시작각.'); // 스크립트 로드 시작점 확인
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        console.log('각뿔봇 스크립트 로드 시작각.');
+
+        let app;
+        let db;
+        let auth;
         let currentUserId = null;
         let isLoading = false;
 
@@ -292,7 +449,7 @@
         const changelogModal = document.getElementById('changelog-modal');
         const closeChangelogButton = document.getElementById('close-changelog-button');
         const changelogDisplayContent = document.getElementById('changelog-display-content');
-        const changelogData = document.getElementById('changelog-data');
+        const changelogData = document.getElementById('changelog-data'); // Hidden div with default changelog
 
         // Profile elements
         const profileButton = document.getElementById('profile-button');
@@ -303,13 +460,29 @@
         const saveProfileButton = document.getElementById('save-profile-button');
         const profileSaveStatus = document.getElementById('profile-save-status');
 
+        // Changelog Edit Elements
+        const changelogAuthSection = document.getElementById('changelog-auth-section');
+        const changelogPasswordInput = document.getElementById('changelog-password');
+        const unlockChangelogButton = document.getElementById('unlock-changelog-button');
+        const changelogEditSection = document.getElementById('changelog-edit-section');
+        const changelogEditorDiv = document.getElementById('changelog-editor'); // Quill editor div
+        const changelogToolbarDiv = document.getElementById('changelog-toolbar'); // Quill toolbar div
+        const saveChangelogEditsButton = document.getElementById('save-changelog-edits');
+        const cancelChangelogEditsButton = document.getElementById('cancel-changelog-edits');
+        const changelogStatus = document.getElementById('changelog-status');
+        const userIdDisplay = document.getElementById('user-id-display');
+
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
 
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
         const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
+        const FIRESTORE_CHANGELOG_PATH = 'current_changelog'; // Document ID for the changelog
+        const ADMIN_PASSWORD = '1210'; // !!! 비밀번호 변경: admin123 -> 1210 !!!
+
         let chatHistoryInMemory = [];
         let currentProfileData = { name: '', bio: '' };
+        let quill = null; // Quill 인스턴스
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -561,6 +734,93 @@
             }
         };
 
+        // Function to load changelog content from Firestore
+        const loadChangelogContent = () => {
+            if (!db || !appId || !currentUserId) {
+                console.warn('Firestore 또는 앱 ID/사용자 ID가 초기화되지 않았각. 변경 사항을 불러올 수 없각.');
+                changelogDisplayContent.innerHTML = '<p class="text-red-500">변경 사항을 불러올 수 없각. 데이터베이스 연결 문제일 수 있각.</p>';
+                return;
+            }
+
+            const changelogDocRef = doc(db, `artifacts/${appId}/public/data/changelogs/${FIRESTORE_CHANGELOG_PATH}`);
+
+            // Set up real-time listener for changelog
+            onSnapshot(changelogDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    changelogDisplayContent.innerHTML = data.content || '<p>저장된 변경 사항이 없각.</p>';
+                } else {
+                    console.log("Firestore에 변경 사항 문서가 없각. 기본 내용을 사용하각.");
+                    // If document doesn't exist, use default from hidden div and save it to Firestore
+                    const defaultChangelog = changelogData.innerHTML;
+                    changelogDisplayContent.innerHTML = defaultChangelog;
+                    setDoc(changelogDocRef, { content: defaultChangelog })
+                        .then(() => console.log('기본 변경 사항을 Firestore에 저장했각.'))
+                        .catch(e => console.error('기본 변경 사항 저장 오류각:', e));
+                }
+            }, (error) => {
+                console.error("변경 사항 실시간 업데이트 오류각:", error);
+                changelogDisplayContent.innerHTML = `<p class="text-red-500">변경 사항 불러오기 오류각: ${error.message}</p>`;
+            });
+        };
+
+        // Function to save changelog content to Firestore
+        const saveChangelogContent = async (content) => {
+            if (!db || !appId || !currentUserId) {
+                changelogStatus.textContent = '저장 오류각: 데이터베이스 연결 문제각.';
+                changelogStatus.classList.remove('hidden', 'text-green-500');
+                changelogStatus.classList.add('text-red-500');
+                return;
+            }
+
+            const changelogDocRef = doc(db, `artifacts/${appId}/public/data/changelogs/${FIRESTORE_CHANGELOG_PATH}`);
+            try {
+                await setDoc(changelogDocRef, { content: content });
+                changelogStatus.textContent = '변경 사항 저장됐각!';
+                changelogStatus.classList.remove('hidden', 'text-red-500');
+                changelogStatus.classList.add('text-green-500');
+            } catch (e) {
+                console.error("Firestore 변경 사항 저장 오류각:", e);
+                changelogStatus.textContent = `저장 실패각: ${e.message}`;
+                changelogStatus.classList.remove('hidden', 'text-green-500');
+                changelogStatus.classList.add('text-red-500');
+            } finally {
+                setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
+            }
+        };
+
+        // Function to show changelog in view mode
+        const showChangelogViewMode = () => {
+            changelogDisplayContent.classList.remove('hidden');
+            changelogAuthSection.classList.remove('hidden'); // Show auth section by default
+            changelogEditSection.classList.add('hidden');
+            changelogStatus.classList.add('hidden');
+            changelogPasswordInput.value = ''; // Clear password input
+            changelogPasswordInput.classList.remove('border-red-500'); // Remove error border
+            if (quill) {
+                quill.root.innerHTML = ''; // Clear Quill content when switching to view mode
+            }
+        };
+
+        // Function to show changelog in edit mode
+        const showChangelogEditMode = () => {
+            changelogDisplayContent.classList.add('hidden');
+            changelogAuthSection.classList.add('hidden');
+            changelogEditSection.classList.remove('hidden');
+
+            if (!quill) {
+                quill = new Quill(changelogEditorDiv, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: '#changelog-toolbar' // Refer to the ID of the pre-defined toolbar
+                    }
+                });
+            }
+            // Populate editor with current content from display
+            quill.root.innerHTML = changelogDisplayContent.innerHTML;
+            changelogStatus.classList.add('hidden'); // Hide status message
+        };
+
         // Handle sending a message
         const handleSendMessage = async () => {
             const inputVal = userInput.value.trim();
@@ -609,14 +869,52 @@
         // Event listener for Changelog button
         changelogButton.addEventListener('click', () => {
             dropdownMenu.classList.add('hidden'); // Close dropdown menu
+            // loadChangelogContent() is now handled by onSnapshot in initFirebase
             changelogModal.classList.remove('hidden'); // Show the modal
-            changelogDisplayContent.innerHTML = changelogData.innerHTML; // Load changelog content
+            showChangelogViewMode(); // Ensure it starts in view mode
         });
 
         // Event listener for Close Changelog button
         closeChangelogButton.addEventListener('click', () => {
             changelogModal.classList.add('hidden'); // Hide the modal
+            showChangelogViewMode(); // Reset view mode and clear password on close
         });
+
+        // Event listener for Unlock Changelog button
+        unlockChangelogButton.addEventListener('click', () => {
+            const enteredPassword = changelogPasswordInput.value;
+            if (enteredPassword === ADMIN_PASSWORD) {
+                changelogStatus.textContent = '편집 모드각!';
+                changelogStatus.classList.remove('hidden', 'text-red-500');
+                changelogStatus.classList.add('text-green-500');
+                changelogPasswordInput.classList.remove('border-red-500'); // Remove error border
+                showChangelogEditMode();
+            } else {
+                changelogStatus.textContent = '비밀번호 틀렸각!';
+                changelogStatus.classList.remove('hidden', 'text-green-500');
+                changelogStatus.classList.add('text-red-500');
+                changelogPasswordInput.classList.add('border-red-500'); // Add error border
+            }
+            setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
+        });
+
+        // Event listener for Save Changelog Edits button
+        saveChangelogEditsButton.addEventListener('click', () => {
+            const newContent = quill.root.innerHTML; // Get HTML from Quill
+            saveChangelogContent(newContent); // Save to Firestore
+            // loadChangelogContent() will be triggered by onSnapshot
+            showChangelogViewMode();
+        });
+
+        // Event listener for Cancel Changelog Edits button
+        cancelChangelogEditsButton.addEventListener('click', () => {
+            showChangelogViewMode();
+            changelogStatus.textContent = '편집 취소했각!';
+            changelogStatus.classList.remove('hidden', 'text-green-500');
+            changelogStatus.classList.add('text-red-500');
+            setTimeout(() => { changelogStatus.classList.add('hidden'); }, 3000);
+        });
+
 
         // Event listener for Profile button
         profileButton.addEventListener('click', () => {
@@ -639,17 +937,55 @@
 
         resetButton.addEventListener('click', reloadPageForReset);
 
+        // Firebase Initialization and Auth
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        const initFirebase = async () => {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Sign in anonymously or with custom token
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                    console.log('Firebase: Custom token으로 로그인했각.');
+                } else {
+                    await signInAnonymously(auth);
+                    console.log('Firebase: 익명으로 로그인했각.');
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdDisplay.textContent = `사용자 ID: ${currentUserId}`;
+                        console.log('Firebase: 사용자 ID 설정됐각:', currentUserId);
+                        loadChangelogContent(); // Load changelog after auth
+                    } else {
+                        currentUserId = null;
+                        userIdDisplay.textContent = '사용자 ID: 로그인 안됐각.';
+                        console.log('Firebase: 사용자 로그아웃했각.');
+                    }
+                });
+            } catch (error) {
+                console.error('Firebase 초기화 또는 로그인 오류각:', error);
+                userIdDisplay.textContent = `사용자 ID: 오류 (${error.message})`;
+                changelogDisplayContent.innerHTML = `<p class="text-red-500">Firebase 연결 오류각: ${error.message}</p>`;
+            }
+        };
+
+
         // Initialize on window load
         window.onload = () => {
-            console.log('각뿔봇 window.onload 실행각.'); // New log
+            console.log('각뿔봇 window.onload 실행각.');
             // Ensure modals are hidden on load
-            changelogModal.classList.add('hidden'); // Explicitly hide
-            profileModal.classList.add('hidden');   // Explicitly hide
+            changelogModal.classList.add('hidden');
+            profileModal.classList.add('hidden');
 
-            currentUserId = crypto.randomUUID();
-            console.log('각뿔봇 스크립트 초기화 완료각. SessionStorage 사용 모드각. 사용자 ID:', currentUserId);
             loadMessagesFromSessionStorage(); // Load chat history
             loadProfileFromLocalStorage(); // Load user profile
+            initFirebase(); // Initialize Firebase and load changelog
         };
     </script>
 </body>
