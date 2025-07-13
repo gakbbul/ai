@@ -6,10 +6,16 @@
     <title>각뿔봇 챗봇</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Quill CSS -->
+    <!-- Quill CSS (Not used in v28, but keeping for compatibility if user wants to go forward) -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        /* Universal reset for box-sizing */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         html, body { /* Ensure full viewport height for both html and body */
             height: 100%;
             margin: 0;
@@ -17,9 +23,10 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            font-weight: 400; /* Explicitly set font-weight to normal (400) */
+            font-weight: 400; /* Default font-weight */
             overflow: hidden; /* Prevent body scroll, flexbox will handle internal scrolling */
         }
+
         /* Custom styles for bouncing dots loading animation */
         .animate-bounce-dot {
             animation: bounce 1.4s infinite ease-in-out both;
@@ -51,10 +58,10 @@
             padding: 2rem;
             border-radius: 0.75rem; /* rounded-lg */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-            width: 90vw; /* Specific width for larger screens */
-            height: 90vh; /* Specific height for larger screens */
-            max-width: 98%; /* Max width for responsiveness */
-            max-height: 98vh; /* Max height for responsiveness */
+            width: 80%; /* Default width for modals */
+            max-width: 600px; /* Max width for larger screens */
+            height: auto; /* Auto height for content */
+            max-height: 90vh; /* Max height for responsiveness */
             overflow-y: auto; /* Allow scrolling within the modal content */
             position: relative;
             display: flex; /* Make it a flex container */
@@ -85,26 +92,26 @@
             font-weight: 700;
         }
 
-        /* For Quill editor */
+        /* Quill editor styles (even if not fully functional in v28, keep for structure) */
         #changelog-editor-container {
-            flex-grow: 1; /* Allow editor to take available space */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
         #changelog-editor {
-            flex-grow: 1; /* Editor itself takes remaining space */
+            flex-grow: 1;
             border: 1px solid #ccc;
-            min-height: 200px; /* Minimum height for the editor */
-            background-color: #f8f8f8; /* Light background for editor */
+            min-height: 200px;
+            background-color: #f8f8f8;
             padding: 1rem;
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
         }
 
         .ql-toolbar {
-            border: 1px solid #ccc; /* Add border to toolbar */
-            border-bottom: none; /* No bottom border for toolbar */
+            border: 1px solid #ccc;
+            border-bottom: none;
             padding: 8px;
             background-color: #f0f0f0;
             border-top-left-radius: 0.5rem;
@@ -112,9 +119,9 @@
         }
 
         .ql-container {
-            border: none !important; /* Quill adds its own border, override it */
+            border: none !important;
             flex-grow: 1;
-            overflow-y: auto; /* Ensure editor content is scrollable */
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -122,37 +129,12 @@
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <!-- This div will now serve as a default/fallback if Firestore is not available or empty -->
     <div id="changelog-data" class="hidden">
-        <h2>v32</h2>
-        <ul>
-            <li><strong>Firebase API 키 오류 개선:</strong> Firebase 초기화 시 API 키 유효성을 더 잘 확인하고, 오류 메시지를 명확하게 표시하도록 수정했각.</li>
-            <li><strong>Gemini API 키 설정 수정:</strong> Gemini API 호출에 사용되는 API 키를 Canvas 환경에서 자동으로 주입받도록 변경했각.</li>
-        </ul>
-
-        <h2>v31</h2>
-        <ul>
-            <li><strong>Quill.js 도구 모음 표시 문제 수정:</strong> '변경 사항' 편집 창에서 도구 모음이 보이지 않던 문제를 해결했각. 이제 글씨 굵게, 기울이기, 글씨 크기 등을 쉽게 조절할 수 있각.</li>
-        </ul>
-
-        <h2>v30</h2>
-        <ul>
-            <li><strong>수정 창 크기 확대:</strong> '변경 사항' 및 '프로필' 모달 창의 크기를 더 크게 키웠각.</li>
-            <li><strong>비밀번호 변경:</strong> 변경 사항 편집 비밀번호를 '1210'으로 바꿨각.</li>
-            <li><strong>리치 텍스트 편집기 도입:</strong> '변경 사항' 내용을 구글 문서처럼 쉽게 편집할 수 있는 리치 텍스트 편집기를 추가했각.</li>
-        </ul>
-
-        <h2>v29</h2>
-        <ul>
-            <li><strong>Firestore 연동:</strong> 변경 사항이 이제 모든 사용자에게 실시간으로 공유되도록 Firestore 데이터베이스에 저장돼각.</li>
-            <li><strong>사용자 ID 표시:</strong> 화면에 현재 사용자 ID가 표시돼각.</li>
-        </ul>
-
         <h2>v28</h2>
         <ul>
             <li><strong>변경 사항 직접 편집 기능 추가:</strong> 이제 비밀번호를 입력하면 '변경 사항' 내용을 직접 수정하고 저장할 수 있각.</li>
             <li><strong>v24 레이아웃 복구:</strong> 이전 버전에서 발생했던 레이아웃 문제를 해결하기 위해 v24의 레이아웃으로 되돌렸각.</li>
             <li><strong>버그 수정 및 기능 복원:</strong> 'TypeError' 버그 수정(v26) 및 날짜 질문 개선(v25) 기능은 그대로 유지했각.</li>
         </ul>
-
         <h2>v27</h2>
         <ul>
             <li>**레이아웃 및 글씨 굵기 수정 시도:** 화면 레이아웃과 글씨 굵기 문제를 해결하려 했으나, 오히려 더 불편하게 만들었각. 이 버전의 레이아웃 변경 사항은 v28에서 롤백됐각.</li>
@@ -182,7 +164,7 @@
         <h2>v22</h2>
         <ul>
             <li><strong>프로필 기능 추가:</strong> 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 프로필 기능이 생겼각.</li>
-            <li><strong>개인화된 답변:</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
+            <li><strong>개인화된 답변:아</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
             <li><strong>프로필 정보 저장 방식 변경:</strong> 프로필 정보는 이제 브라우저를 닫아도 사라지지 않고 기억될 거각. 대화 기록은 여전히 브라우저 탭을 닫으면 사라져각.</li>
             <li><strong>버전 업데이트:</strong> `v21`에서 `v22`로 변경했각.</li>
         </ul>
@@ -234,7 +216,7 @@
         <ul>
             <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 처음부터 다시 시작할 수 있는 버튼이 생겼각.</li>
             <li><strong>사용자 ID 숨김:</strong> 사용자 ID가 화면에 안 보이게 했각.</li>
-            <li><strong>대화 내용 기억 기능 추가:시 SessionStorage를 사용하여 브라우저 세션 동안 대화 내용을 기억하도록 구현했각.</li>
+            <li><strong>대화 내용 기억 기능 추가:</strong> SessionStorage를 사용하여 브라우저 세션 동안 대화 내용을 기억하도록 구현했각.</li>
             <li><strong>Gemini API 연동:</strong> 묻는 말에 대답하고, '베이스'에 대한 부정적인 인식을 가지도록 Gemini API 프롬프트를 조정했각.</li>
         </ul>
         <!-- 여기에 새로운 변경 사항을 추가하세요. -->
@@ -278,7 +260,7 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v32
+            v28
         </div>
 
         <!-- User ID Display -->
@@ -344,29 +326,13 @@
 
             <!-- Changelog Edit Section -->
             <div id="changelog-edit-section" class="mt-4 hidden flex flex-col flex-grow space-y-3">
-                <!-- Quill Toolbar -->
-                <div id="changelog-toolbar" class="ql-toolbar ql-snow">
-                    <span class="ql-formats">
-                        <select class="ql-header">
-                            <option value="1"></option>
-                            <option value="2"></option>
-                            <option value="false"></option>
-                        </select>
-                    </span>
-                    <span class="ql-formats">
-                        <button class="ql-bold"></button>
-                        <button class="ql-italic"></button>
-                        <button class="ql-underline"></button>
-                    </span>
-                    <span class="ql-formats">
-                        <button class="ql-list" value="ordered"></button>
-                        <button class="ql-list" value="bullet"></button>
-                    </span>
-                    <span class="ql-formats">
-                        <button class="ql-link"></button>
-                    </span>
-                </div>
-                <div id="changelog-editor" class="flex-grow"></div>
+                <!-- In v28, Quill.js is not fully integrated for editing changelog. This section will just be a textarea. -->
+                <textarea
+                    id="changelog-editor"
+                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="10"
+                    placeholder="변경 사항 내용을 입력하각..."
+                ></textarea>
                 <div class="flex justify-end space-x-3">
                     <button
                         id="save-changelog-edits"
@@ -429,7 +395,7 @@
         </div>
     </div>
 
-    <!-- Quill JS -->
+    <!-- Quill JS (Not used for editing in v28, but included for consistency if user wants to upgrade later) -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <!-- Firebase SDKs -->
     <script type="module">
@@ -466,13 +432,12 @@
         const saveProfileButton = document.getElementById('save-profile-button');
         const profileSaveStatus = document.getElementById('profile-save-status');
 
-        // Changelog Edit Elements
+        // Changelog Edit Elements (for v28, this is a simple textarea)
         const changelogAuthSection = document.getElementById('changelog-auth-section');
         const changelogPasswordInput = document.getElementById('changelog-password');
         const unlockChangelogButton = document.getElementById('unlock-changelog-button');
         const changelogEditSection = document.getElementById('changelog-edit-section');
-        const changelogEditorDiv = document.getElementById('changelog-editor'); // Quill editor div
-        const changelogToolbarDiv = document.getElementById('changelog-toolbar'); // Quill toolbar div
+        const changelogEditorTextarea = document.getElementById('changelog-editor'); // This is now a textarea
         const saveChangelogEditsButton = document.getElementById('save-changelog-edits');
         const cancelChangelogEditsButton = document.getElementById('cancel-changelog-edits');
         const changelogStatus = document.getElementById('changelog-status');
@@ -484,11 +449,11 @@
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
         const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
         const FIRESTORE_CHANGELOG_PATH = 'current_changelog'; // Document ID for the changelog
-        const ADMIN_PASSWORD = '1210'; // !!! 비밀번호 변경: admin123 -> 1210 !!!
+        const ADMIN_PASSWORD = '1210'; // 비밀번호는 1210으로 유지
 
         let chatHistoryInMemory = [];
         let currentProfileData = { name: '', bio: '' };
-        let quill = null; // Quill 인스턴스
+        // Quill instance is not used in v28 for editing, so no 'quill' variable here.
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -803,9 +768,7 @@
             changelogStatus.classList.add('hidden');
             changelogPasswordInput.value = ''; // Clear password input
             changelogPasswordInput.classList.remove('border-red-500'); // Remove error border
-            if (quill) {
-                quill.root.innerHTML = ''; // Clear Quill content when switching to view mode
-            }
+            // No Quill.js in v28, so no quill.root.innerHTML = '';
         };
 
         // Function to show changelog in edit mode
@@ -814,16 +777,8 @@
             changelogAuthSection.classList.add('hidden');
             changelogEditSection.classList.remove('hidden');
 
-            if (!quill) {
-                quill = new Quill(changelogEditorDiv, {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: '#changelog-toolbar' // Refer to the ID of the pre-defined toolbar
-                    }
-                });
-            }
-            // Populate editor with current content from display
-            quill.root.innerHTML = changelogDisplayContent.innerHTML;
+            // In v28, we use a simple textarea for editing
+            changelogEditorTextarea.value = changelogDisplayContent.innerText; // Populate textarea with current text
             changelogStatus.classList.add('hidden'); // Hide status message
         };
 
@@ -906,7 +861,7 @@
 
         // Event listener for Save Changelog Edits button
         saveChangelogEditsButton.addEventListener('click', () => {
-            const newContent = quill.root.innerHTML; // Get HTML from Quill
+            const newContent = changelogEditorTextarea.value; // Get text from textarea
             saveChangelogContent(newContent); // Save to Firestore
             // loadChangelogContent() will be triggered by onSnapshot
             showChangelogViewMode();
