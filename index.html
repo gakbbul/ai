@@ -24,9 +24,103 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1.0); }
         }
+        /* Style for the changelog modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            overflow-y: auto; /* Allow scrolling within the overlay */
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem; /* rounded-lg */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            max-width: 90%;
+            max-height: 90vh; /* Max height to prevent overflow on small screens */
+            overflow-y: auto; /* Allow scrolling within the modal content */
+            position: relative;
+        }
+        .modal-content h1 {
+            font-size: 2.5rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 1.5rem;
+            color: #1f2937; /* text-gray-900 */
+        }
+        .modal-content h2 {
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .modal-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .modal-content li {
+            margin-bottom: 0.5rem;
+        }
+        .modal-content strong {
+            font-weight: 700;
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100 antialiased">
+    <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
+    <div id="changelog-data" class="hidden">
+        <h2>v21</h2>
+        <ul>
+            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴가 열렸을 때 메뉴 버튼의 배경색이 연하게 변경되도록 수정했각.</li>
+            <li><strong>'변경 사항' 페이지 추가:</strong> '변경 사항' 버튼 클릭 시 별도의 페이지로 이동하여 변경 이력을 볼 수 있도록 했각.</li>
+            <li><strong>'보내각' 버튼 텍스트 줄바꿈 방지:</strong> 모바일 환경에서 '보내각' 버튼 텍스트가 세로로 표시되는 문제를 해결했각.</li>
+        </ul>
+
+        <h2>v19</h2>
+        <ul>
+            <li><strong>각뿔봇의 기억력 추가:</strong> 각뿔봇이 대화를 기억하며 사용자와 좀 더 수월한 대화를 할 수 있도록 했각.</li>
+            <li><strong>Firebase 오류 메시지 제거:</strong> Firebase 관련 오류 메시지가 더 이상 표시되지 않아각.</li>
+        </ul>
+
+        <h2>v18</h2>
+        <ul>
+            <li><strong>API 오류 메시지 개선:</strong> Gemini API 통신 오류 시 사용자에게 더 자세한 오류 메시지를 표시하도록 개선했각.</li>
+        </ul>
+
+        <h2>v17</h2>
+        <ul>
+            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼의 색상을 회색으로 변경했각.</li>
+        </ul>
+
+        <h2>v16</h2>
+        <ul>
+            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 상단으로 이동시켰각.</li>
+            <li><strong>메시지 컨테이너 패딩 조정:</strong> 초기화 버튼과 메시지가 겹치지 않도록 채팅 메시지 컨테이너의 상단 패딩을 조정했각.</li>
+        </ul>
+
+        <h2>v15</h2>
+        <ul>
+            <li><strong>버전명 표시 기능 추가:</strong> 앱 오른쪽 상단에 현재 버전명(v15)을 작게 표시하도록 했각.</li>
+        </ul>
+
+        <h2>v14</h2>
+        <ul>
+            <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 초기화할 수 있는 버튼을 추가했각.</li>
+            <li><strong>사용자 ID 숨김:</strong> 화면에 사용자 ID가 표시되지 않도록 변경했각.</li>
+            <li><strong>대화 내용 기억 기능 추가:</strong> SessionStorage를 사용하여 브라우저 세션 동안 대화 내용을 기억하도록 구현했각.</li>
+            <li><strong>Gemini API 연동:</strong> 묻는 말에 대답하고, '베이스'에 대한 부정적인 인식을 가지도록 Gemini API 프롬프트를 조정했각.</li>
+        </ul>
+        <!-- 여기에 새로운 변경 사항을 추가하세요. -->
+    </div>
+
     <div class="flex-1 flex flex-col p-4 overflow-hidden relative">
         <!-- Inverted triangle background element -->
         <div
@@ -34,22 +128,37 @@
             style="clip-path: polygon(0% 0%, 100% 0%, 50% 100%);"
         ></div>
 
-        <!-- Reset button in top-left corner -->
-        <button
-            id="reset-button"
-            class="absolute top-8 left-8 px-4 py-2 bg-gray-500 text-white rounded-xl shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105 z-20"
-        >
-            초기화
-        </button>
+        <!-- Top Left Section: Menu (for Reset Button and Change Log) -->
+        <div class="absolute top-8 left-8 z-30">
+            <button id="menu-button" class="p-2 bg-gray-700 rounded-full shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div id="dropdown-menu" class="absolute top-full left-0 mt-2 w-40 bg-white rounded-lg shadow-lg hidden">
+                <button
+                    id="reset-button"
+                    class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out"
+                >
+                    대화 초기화
+                </button>
+                <button
+                    id="changelog-button"
+                    class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out"
+                >
+                    변경 사항
+                </button>
+            </div>
+        </div>
 
-        <!-- Version display in top-right corner -->
+        <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v17
+            v21
         </div>
 
         <!-- Chat messages container -->
-        <!-- Added pt-16 to ensure messages don't overlap with the top-left button -->
-        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-16 mb-4 flex flex-col space-y-3 relative z-10">
+        <!-- Adjusted pt-24 to accommodate the new menu button and dropdown -->
+        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 mb-4 flex flex-col space-y-3 relative z-10">
             <div id="initial-message" class="text-center text-gray-500 mt-10">
                 각뿔봇에게 말을 걸어보각.
             </div>
@@ -66,25 +175,53 @@
         />
         <button
             id="send-button"
-            class="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+            class="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105 whitespace-nowrap"
         >
             보내각
         </button>
     </div>
 
+    <!-- Changelog Modal -->
+    <div id="changelog-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h1 class="text-4xl font-bold">각뿔봇 변경 사항</h1>
+                <button
+                    id="close-changelog-button"
+                    class="px-4 py-2 bg-red-500 text-white rounded-xl shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                >
+                    닫기
+                </button>
+            </div>
+            <div id="changelog-display-content" class="prose max-w-none">
+                <!-- Changelog content will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <script type="module">
-        let currentUserId = null; // Not strictly needed for sessionStorage, but kept for consistency
+        console.log('각뿔봇 스크립트 로드 시작각.');
+
+        let currentUserId = null;
         let isLoading = false;
 
         const messagesContainer = document.getElementById('messages-container');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const resetButton = document.getElementById('reset-button');
+        const menuButton = document.getElementById('menu-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const changelogButton = document.getElementById('changelog-button');
+        const changelogModal = document.getElementById('changelog-modal'); // Changelog modal element
+        const closeChangelogButton = document.getElementById('close-changelog-button'); // Close button for modal
+        const changelogDisplayContent = document.getElementById('changelog-display-content'); // Div to display changelog
+        const changelogData = document.getElementById('changelog-data'); // Hidden div containing changelog data
+
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
 
-        const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history'; // sessionStorage 키 정의
-        let chatHistoryInMemory = []; // 현재 세션의 대화 기록을 메모리에 저장
+        const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
+        let chatHistoryInMemory = [];
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -119,7 +256,7 @@
             isLoading = show;
             userInput.disabled = show;
             sendButton.disabled = show;
-            resetButton.disabled = show;
+            menuButton.disabled = show;
 
             const existingLoadingDiv = document.getElementById('loading-indicator');
             if (show && !existingLoadingDiv) {
@@ -144,50 +281,62 @@
 
         // Function to save a message to sessionStorage
         const saveMessageToSessionStorage = (sender, text) => {
-            // 현재 메모리의 대화 기록을 불러오거나 초기화
-            const storedHistory = sessionStorage.getItem(SESSION_STORAGE_KEY);
-            chatHistoryInMemory = storedHistory ? JSON.parse(storedHistory) : [];
+            try {
+                const storedHistory = sessionStorage.getItem(SESSION_STORAGE_KEY);
+                chatHistoryInMemory = storedHistory ? JSON.parse(storedHistory) : [];
 
-            // 새 메시지 추가
-            chatHistoryInMemory.push({ sender: sender, text: text, timestamp: Date.now() });
+                chatHistoryInMemory.push({ sender: sender, text: text, timestamp: Date.now() });
 
-            // 업데이트된 기록을 sessionStorage에 저장
-            sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(chatHistoryInMemory));
+                sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(chatHistoryInMemory));
+            } catch (e) {
+                console.error("sessionStorage 저장 오류각:", e);
+            }
         };
 
         // Function to load messages from sessionStorage
         const loadMessagesFromSessionStorage = () => {
-            const storedHistory = sessionStorage.getItem(SESSION_STORAGE_KEY);
-            if (storedHistory) {
-                chatHistoryInMemory = JSON.parse(storedHistory);
-                // 기존 UI 메시지 모두 제거
-                while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
-                    messagesContainer.removeChild(messagesContainer.firstChild);
+            try {
+                const storedHistory = sessionStorage.getItem(SESSION_STORAGE_KEY);
+                if (storedHistory) {
+                    chatHistoryInMemory = JSON.parse(storedHistory);
+                    while (messagesContainer.firstChild && messagesContainer.firstChild !== initialMessageDiv && messagesContainer.firstChild !== messagesEndRef) {
+                        messagesContainer.removeChild(messagesContainer.firstChild);
+                    }
+                    chatHistoryInMemory.forEach(msg => addMessageToUI(msg.sender, msg.text));
+                    if (initialMessageDiv) {
+                        initialMessageDiv.remove();
+                        initialMessageDiv = null;
+                    }
+                } else {
+                    if (!initialMessageDiv) {
+                        initialMessageDiv = document.createElement('div');
+                        initialMessageDiv.id = 'initial-message';
+                        initialMessageDiv.className = 'text-center text-gray-500 mt-10';
+                        initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
+                        messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
+                    }
                 }
-                // 불러온 메시지 UI에 추가
-                chatHistoryInMemory.forEach(msg => addMessageToUI(msg.sender, msg.text));
-                // 초기 메시지가 있다면 제거
-                if (initialMessageDiv) {
-                    initialMessageDiv.remove();
-                    initialMessageDiv = null;
-                }
-            } else {
-                // 기록이 없으면 초기 메시지 표시 확인
+                scrollToBottom();
+            } catch (e) {
+                console.error("sessionStorage 로드 오류각:", e);
                 if (!initialMessageDiv) {
                     initialMessageDiv = document.createElement('div');
                     initialMessageDiv.id = 'initial-message';
                     initialMessageDiv.className = 'text-center text-gray-500 mt-10';
-                    initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각.';
+                    initialMessageDiv.textContent = '각뿔봇에게 말을 걸어보각. (기록 로드 실패)';
                     messagesContainer.insertBefore(initialMessageDiv, messagesEndRef);
                 }
             }
-            scrollToBottom();
         };
 
         // Function to clear chat history by reloading the page and clearing sessionStorage
         const reloadPageForReset = () => {
-            sessionStorage.removeItem(SESSION_STORAGE_KEY); // sessionStorage에서 기록 삭제
-            window.location.reload(); // 페이지 새로고침
+            try {
+                sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            } catch (e) {
+                console.error("sessionStorage 초기화 오류각:", e);
+            }
+            window.location.reload();
         };
 
         // Function to get chatbot response from Gemini API
@@ -209,11 +358,8 @@
                     11. 같은 말을 반복하지 않는다.
                 `;
 
-                // 현재까지의 대화 기록을 chatHistory에 포함 (sessionStorage에서 불러온 기록 사용)
                 let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
-                // 새로운 사용자 메시지 추가
                 chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
-
 
                 const payload = {
                     contents: chatHistory,
@@ -234,7 +380,7 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
-                    return "응답이 이상하각. (API 통신 오류)";
+                    return `응답이 이상하각. (API 통신 오류: ${response.status} ${response.statusText})`;
                 }
 
                 const result = await response.json();
@@ -279,12 +425,12 @@
             if (inputVal === '') return;
 
             addMessageToUI('user', inputVal);
-            saveMessageToSessionStorage('user', inputVal); // sessionStorage에 사용자 메시지 저장
+            saveMessageToSessionStorage('user', inputVal);
             userInput.value = '';
 
             const botResponseText = await getBotResponse(inputVal);
             addMessageToUI('bot', botResponseText);
-            saveMessageToSessionStorage('bot', botResponseText); // sessionStorage에 봇 메시지 저장
+            saveMessageToSessionStorage('bot', botResponseText);
         };
 
         // Event Listeners
@@ -294,13 +440,50 @@
                 handleSendMessage();
             }
         });
+
+        // Toggle dropdown menu visibility
+        menuButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent click from closing immediately
+            dropdownMenu.classList.toggle('hidden');
+            // Change menu button color when dropdown is active
+            if (!dropdownMenu.classList.contains('hidden')) {
+                menuButton.classList.remove('bg-gray-700', 'hover:bg-gray-800');
+                menuButton.classList.add('bg-gray-600'); // Lighter shade when active
+            } else {
+                menuButton.classList.remove('bg-gray-600');
+                menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!dropdownMenu.contains(event.target) && !menuButton.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+                menuButton.classList.remove('bg-gray-600');
+                menuButton.classList.add('bg-gray-700', 'hover:bg-gray-800');
+            }
+        });
+
+        // Event listener for Changelog button
+        changelogButton.addEventListener('click', () => {
+            dropdownMenu.classList.add('hidden'); // Close dropdown menu
+            changelogModal.classList.remove('hidden'); // Show the modal
+            // Load changelog content from the hidden div
+            changelogDisplayContent.innerHTML = changelogData.innerHTML;
+        });
+
+        // Event listener for Close Changelog button
+        closeChangelogButton.addEventListener('click', () => {
+            changelogModal.classList.add('hidden'); // Hide the modal
+        });
+
         resetButton.addEventListener('click', reloadPageForReset);
 
         // Initialize on window load
         window.onload = () => {
-            currentUserId = crypto.randomUUID(); // 사용자 ID 생성 (sessionStorage에는 직접 사용되지 않음)
-            console.log('SessionStorage 사용 모드각. 대화 기록은 브라우저 세션 동안만 유지돼각. 사용자 ID:', currentUserId);
-            loadMessagesFromSessionStorage(); // 페이지 로드 시 기존 대화 기록 불러오기
+            currentUserId = crypto.randomUUID();
+            console.log('각뿔봇 스크립트 초기화 완료각. SessionStorage 사용 모드각. 사용자 ID:', currentUserId);
+            loadMessagesFromSessionStorage();
         };
     </script>
 </body>
