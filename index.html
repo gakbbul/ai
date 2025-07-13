@@ -8,9 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        html, body { /* Added html to ensure full viewport height */
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
             overflow: hidden; /* Prevent body scroll */
         }
         /* Custom styles for bouncing dots loading animation */
@@ -24,7 +28,7 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1.0); }
         }
-        /* Style for the changelog modal */
+        /* Style for modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -37,6 +41,7 @@
             align-items: center;
             z-index: 100;
             overflow-y: auto; /* Allow scrolling within the overlay */
+            padding: 1rem; /* Add padding for small screens */
         }
         .modal-content {
             background-color: white;
@@ -77,45 +82,79 @@
 <body class="flex flex-col h-screen bg-gray-100 antialiased">
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <div id="changelog-data" class="hidden">
+        <h2>v27</h2>
+        <ul>
+            <li><strong>메시지 입력창 위치 수정:</strong> 채팅 화면의 메시지 입력창이 화면 아래에 제대로 고정되도록 레이아웃을 개선했각.</li>
+        </ul>
+
+        <h2>v26</h2>
+        <ul>
+            <li><strong>메시지 입력창 위치 수정:</strong> 메시지 입력창이 화면 아래에 제대로 고정되도록 수정했각.</li>
+        </ul>
+
+        <h2>v24</h2>
+        <ul>
+            <li><strong>대화 기억 기능 개선:</strong> 각뿔봇이 대화를 기억할 수 있게 되어 좀 더 수월한 대화를 할 수 있게 되었각.</li>
+        </ul>
+
+        <h2>v23</h2>
+        <ul>
+            <li><strong>변경 사항 내용 간소화:</strong> 사용자가 이해하기 쉽게 변경 사항 설명을 간략하게 다듬었각. 개발자용 세부 내용은 모두 빼버렸각.</li>
+            <li><strong>업데이트 날짜 제거:</b> 각 버전별 업데이트 날짜를 없앴각.</li>
+            <li><strong>v14 기억 기능 설명 제거:</strong> v14 변경 사항에서 기억 기능 관련 설명을 완전히 뺐각.</li>
+        </ul>
+
+        <h2>v22</h2>
+        <ul>
+            <li><strong>프로필 기능 추가:</strong> 각뿔봇에게 네 이름과 알려주고 싶은 점을 저장할 수 있는 프로필 기능이 생겼각.</li>
+            <li><strong>개인화된 답변:</strong> 각뿔봇이 네 프로필 정보를 기억해서 더 맞춤형으로 대답해줄 거각.</li>
+            <li><strong>프로필 정보 저장 방식 변경:</strong> 프로필 정보는 이제 브라우저를 닫아도 사라지지 않고 기억될 거각. 대화 기록은 여전히 브라우저 탭을 닫으면 사라져각.</li>
+        </ul>
+
         <h2>v21</h2>
         <ul>
-            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴가 열렸을 때 메뉴 버튼의 배경색이 연하게 변경되도록 수정했각.</li>
-            <li><strong>'변경 사항' 페이지 추가:</strong> '변경 사항' 버튼 클릭 시 별도의 페이지로 이동하여 변경 이력을 볼 수 있도록 했각.</li>
-            <li><strong>'보내각' 버튼 텍스트 줄바꿈 방지:</strong> 모바일 환경에서 '보내각' 버튼 텍스트가 세로로 표시되는 문제를 해결했각.</li>
+            <li><strong>단일 페이지 변경 사항 구현:</b> '변경 사항' 버튼을 누르면 새 창이 아니라 지금 보고 있는 화면에 바로 변경 내용이 나타나각.</li>
+            <li><strong>메뉴 버튼 활성화 색상:</strong> 메뉴 버튼을 누르면 버튼 색깔이 살짝 연해져서 메뉴가 열린 걸 알 수 있각.</li>
+        </ul>
+
+        <h2>v20</h2>
+        <ul>
+            <li><strong>메뉴 버튼 시각 피드백 추가:</strong> 왼쪽 상단 메뉴 버튼을 누르면 색깔이 살짝 바뀌어각.</li>
+            <li><strong>'변경 사항' 버튼 추가:</strong> 메뉴에 '변경 사항' 버튼이 생겼각.</li>
+            <li><strong>모바일 버튼 글씨 개선:</strong> 모바일에서 '보내각' 버튼 글씨가 깨지지 않고 잘 보이게 고쳤각.</li>
         </ul>
 
         <h2>v19</h2>
         <ul>
-            <li><strong>각뿔봇의 기억력 추가:</strong> 각뿔봇이 대화를 기억하며 사용자와 좀 더 수월한 대화를 할 수 있도록 했각.</li>
-            <li><strong>Firebase 오류 메시지 제거:</strong> Firebase 관련 오류 메시지가 더 이상 표시되지 않아각.</li>
+            <li><strong>대화 기록 저장 방식 변경:</strong> 대화 기록이 이제 브라우저 탭을 닫으면 사라지도록 바뀌었각.</li>
+            <li><strong>오류 메시지 제거:</strong> 이전 버전에서 보이던 오류 메시지가 더 이상 안 보이게 했각.</li>
         </ul>
 
         <h2>v18</h2>
         <ul>
-            <li><strong>API 오류 메시지 개선:</strong> Gemini API 통신 오류 시 사용자에게 더 자세한 오류 메시지를 표시하도록 개선했각.</li>
+            <li><strong>응답 오류 메시지 개선:</strong> 각뿔봇이 대답을 못 할 때, 왜 그런지 더 자세히 알려주도록 고쳤각.</li>
         </ul>
 
         <h2>v17</h2>
         <ul>
-            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼의 색상을 회색으로 변경했각.</li>
+            <li><strong>초기화 버튼 색상 변경:</strong> 초기화 버튼 색깔을 회색으로 바꿨각.</li>
         </ul>
 
         <h2>v16</h2>
         <ul>
-            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 상단으로 이동시켰각.</li>
-            <li><strong>메시지 컨테이너 패딩 조정:</strong> 초기화 버튼과 메시지가 겹치지 않도록 채팅 메시지 컨테이너의 상단 패딩을 조정했각.</li>
+            <li><strong>초기화 버튼 위치 변경:</strong> 초기화 버튼을 화면 왼쪽 위로 옮겼각.</li>
         </ul>
 
         <h2>v15</h2>
         <ul>
-            <li><strong>버전명 표시 기능 추가:</strong> 앱 오른쪽 상단에 현재 버전명(v15)을 작게 표시하도록 했각.</li>
+            <li><strong>버전 표시 기능 추가:</strong> 앱 오른쪽 위에 현재 버전이 표시되게 했각.</li>
         </ul>
 
         <h2>v14</h2>
         <ul>
-            <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 초기화할 수 있는 버튼을 추가했각.</li>
-            <li><strong>사용자 ID 숨김:</strong> 화면에 사용자 ID가 표시되지 않도록 변경했각.</li>
-            <li><strong>Gemini API 연동:</strong> 묻는 말에 대답하고, '베이스'에 대한 부정적인 인식을 가지도록 Gemini API 프롬프트를 조정했각.</li>
+            <li><strong>대화 초기화 버튼 추가:</strong> 대화 내용을 처음부터 다시 시작할 수 있는 버튼이 생겼각.</li>
+            <li><strong>사용자 ID 숨김:</strong> 사용자 ID가 화면에 안 보이게 했각.</li>
+            <li><strong>각뿔봇 성격 조정:</strong> 각뿔봇이 질문에 대답하고, 베이스를 싫어하도록 만들었각.</li>
         </ul>
         <!-- 여기에 새로운 변경 사항을 추가하세요. -->
     </div>
@@ -147,17 +186,23 @@
                 >
                     변경 사항
                 </button>
+                <button
+                    id="profile-button"
+                    class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out"
+                >
+                    프로필
+                </button>
             </div>
         </div>
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v21
+            v27
         </div>
 
         <!-- Chat messages container -->
         <!-- Adjusted pt-24 to accommodate the new menu button and dropdown -->
-        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 mb-4 flex flex-col space-y-3 relative z-10">
+        <div id="messages-container" class="flex-1 overflow-y-auto p-4 pt-24 flex flex-col space-y-3 relative z-10">
             <div id="initial-message" class="text-center text-gray-500 mt-10">
                 각뿔봇에게 말을 걸어보각.
             </div>
@@ -198,8 +243,50 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h1 class="text-4xl font-bold">내 프로필</h1>
+                <button
+                    id="close-profile-button"
+                    class="px-4 py-2 bg-red-500 text-white rounded-xl shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                >
+                    닫기
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label for="profile-name" class="block text-lg font-semibold text-gray-700 mb-2">이름:</label>
+                    <input
+                        type="text"
+                        id="profile-name"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="이름을 입력하각..."
+                    />
+                </div>
+                <div>
+                    <label for="profile-bio" class="block text-lg font-semibold text-gray-700 mb-2">각뿔봇이 알아줬으면 하는 점:</label>
+                    <textarea
+                        id="profile-bio"
+                        rows="5"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="각뿔봇에게 알려주고 싶은 점을 입력하각..."
+                    ></textarea>
+                </div>
+                <button
+                    id="save-profile-button"
+                    class="w-full px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+                >
+                    저장
+                </button>
+                <div id="profile-save-status" class="text-center text-sm mt-2 hidden"></div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
-        console.log('각뿔봇 스크립트 로드 시작각.');
+        console.log('각뿔봇 스크립트 로드 시작각.'); // 스크립트 로드 시작점 확인
 
         let currentUserId = null;
         let isLoading = false;
@@ -211,16 +298,27 @@
         const menuButton = document.getElementById('menu-button');
         const dropdownMenu = document.getElementById('dropdown-menu');
         const changelogButton = document.getElementById('changelog-button');
-        const changelogModal = document.getElementById('changelog-modal'); // Changelog modal element
-        const closeChangelogButton = document.getElementById('close-changelog-button'); // Close button for modal
-        const changelogDisplayContent = document.getElementById('changelog-display-content'); // Div to display changelog
-        const changelogData = document.getElementById('changelog-data'); // Hidden div containing changelog data
+        const changelogModal = document.getElementById('changelog-modal');
+        const closeChangelogButton = document.getElementById('close-changelog-button');
+        const changelogDisplayContent = document.getElementById('changelog-display-content');
+        const changelogData = document.getElementById('changelog-data');
+
+        // Profile elements
+        const profileButton = document.getElementById('profile-button');
+        const profileModal = document.getElementById('profile-modal');
+        const closeProfileButton = document.getElementById('close-profile-button');
+        const profileNameInput = document.getElementById('profile-name');
+        const profileBioTextarea = document.getElementById('profile-bio');
+        const saveProfileButton = document.getElementById('save-profile-button');
+        const profileSaveStatus = document.getElementById('profile-save-status');
 
         let initialMessageDiv = document.getElementById('initial-message');
         const messagesEndRef = document.getElementById('messages-end-ref');
 
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
+        const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
         let chatHistoryInMemory = [];
+        let currentProfileData = { name: '', bio: '' };
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -328,6 +426,41 @@
             }
         };
 
+        // Function to save profile data to localStorage
+        const saveProfileToLocalStorage = () => {
+            try {
+                currentProfileData.name = profileNameInput.value.trim();
+                currentProfileData.bio = profileBioTextarea.value.trim();
+                localStorage.setItem(LOCAL_STORAGE_PROFILE_KEY, JSON.stringify(currentProfileData));
+                profileSaveStatus.textContent = '프로필 저장됐각!';
+                profileSaveStatus.classList.remove('hidden', 'text-red-500');
+                profileSaveStatus.classList.add('text-green-500');
+                setTimeout(() => { profileSaveStatus.classList.add('hidden'); }, 3000);
+            } catch (e) {
+                console.error("localStorage 저장 오류각:", e);
+                profileSaveStatus.textContent = '프로필 저장 실패각!';
+                profileSaveStatus.classList.remove('hidden', 'text-green-500');
+                profileSaveStatus.classList.add('text-red-500');
+            }
+        };
+
+        // Function to load profile data from localStorage
+        const loadProfileFromLocalStorage = () => {
+            try {
+                const storedProfile = localStorage.getItem(LOCAL_STORAGE_PROFILE_KEY);
+                if (storedProfile) {
+                    currentProfileData = JSON.parse(storedProfile);
+                    profileNameInput.value = currentProfileData.name;
+                    profileBioTextarea.value = currentProfileData.bio;
+                    console.log('프로필 불러왔각:', currentProfileData);
+                } else {
+                    console.log('저장된 프로필 없각.');
+                }
+            } catch (e) {
+                console.error("localStorage 로드 오류각:", e);
+            }
+        };
+
         // Function to clear chat history by reloading the page and clearing sessionStorage
         const reloadPageForReset = () => {
             try {
@@ -342,7 +475,7 @@
         const getBotResponse = async (userMessage) => {
             showLoading(true);
             try {
-                const systemInstruction = `
+                let systemInstruction = `
                     너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
                     1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
                     2. '각'는 동사나 형용사 등 단어의 마지막에 직접 붙여서 사용한다. 예를 들어 '알겠어각'이 아니라 '알겠각', '왔어각?'이 아니라 '왔각'처럼 사용한다.
@@ -356,6 +489,15 @@
                     10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다. 다른 악기에 대한 질문을 받으면 긍정적으로 반응한다.
                     11. 같은 말을 반복하지 않는다.
                 `;
+
+                // Add personalized profile info to system instruction if available
+                if (currentProfileData.name) {
+                    systemInstruction += `\n\n사용자 이름은 '${currentProfileData.name}'이각.`;
+                }
+                if (currentProfileData.bio) {
+                    systemInstruction += `\n\n사용자가 각뿔봇에게 알려주고 싶어하는 점은 다음과 같각: ${currentProfileData.bio}`;
+                }
+
 
                 let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
                 chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
@@ -467,8 +609,7 @@
         changelogButton.addEventListener('click', () => {
             dropdownMenu.classList.add('hidden'); // Close dropdown menu
             changelogModal.classList.remove('hidden'); // Show the modal
-            // Load changelog content from the hidden div
-            changelogDisplayContent.innerHTML = changelogData.innerHTML;
+            changelogDisplayContent.innerHTML = changelogData.innerHTML; // Load changelog content
         });
 
         // Event listener for Close Changelog button
@@ -476,13 +617,38 @@
             changelogModal.classList.add('hidden'); // Hide the modal
         });
 
+        // Event listener for Profile button
+        profileButton.addEventListener('click', () => {
+            dropdownMenu.classList.add('hidden'); // Close dropdown menu
+            loadProfileFromLocalStorage(); // Load existing profile data into modal inputs
+            profileModal.classList.remove('hidden'); // Show the profile modal
+            profileSaveStatus.classList.add('hidden'); // Hide previous save status
+        });
+
+        // Event listener for Save Profile button
+        saveProfileButton.addEventListener('click', () => {
+            saveProfileToLocalStorage(); // Save profile data
+        });
+
+        // Event listener for Close Profile button
+        closeProfileButton.addEventListener('click', () => {
+            profileModal.classList.add('hidden'); // Hide the profile modal
+        });
+
+
         resetButton.addEventListener('click', reloadPageForReset);
 
         // Initialize on window load
         window.onload = () => {
+            console.log('각뿔봇 window.onload 실행각.'); // New log
+            // Ensure modals are hidden on load
+            changelogModal.classList.add('hidden'); // Explicitly hide
+            profileModal.classList.add('hidden');   // Explicitly hide
+
             currentUserId = crypto.randomUUID();
             console.log('각뿔봇 스크립트 초기화 완료각. SessionStorage 사용 모드각. 사용자 ID:', currentUserId);
-            loadMessagesFromSessionStorage();
+            loadMessagesFromSessionStorage(); // Load chat history
+            loadProfileFromLocalStorage(); // Load user profile
         };
     </script>
 </body>
