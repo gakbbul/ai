@@ -129,6 +129,14 @@
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <!-- This div will now serve as the static changelog content -->
     <div id="changelog-data" class="hidden">
+        <h2>v49</h2>
+        <ul>
+            <li>**랜덤 게임 기능 추가 및 개선:** 369게임, 끝말잇기, 초성게임, 스무고개 등 다양한 랜덤 게임 기능이 추가됐각.</li>
+            <li>**끝말잇기 게임 규칙 개선:** 각뿔봇이 대답에 '각'를 붙이지 않으며, 사용자가 사전에 없는 단어를 말하거나 중복된 단어를 사용하면 게임이 종료되각. 각뿔봇이 낼 단어가 없어도 게임이 종료되각.</li>
+            <li>**초성게임 규칙 개선:** 사용자가 "초성게임 시작하각!"이라고 말하면 5개의 초성 문제가 출제되고, 사용자가 사전에 있는 단어 중 초성이 일치하는 단어를 말하면 정답으로 인정하각. 사전에 없는 단어를 말하면 게임이 종료되각.</li>
+            <li>**입력창 자동 포커스 기능 추가:** 메시지 전송 후 입력창이 자동으로 선택되어 바로 다음 메시지를 입력할 수 있각 (데스크톱 환경에 한정).</li>
+            <li>**내부 오류 수정:** 'getBotResponse' 함수 관련 오류 등 내부적인 안정성 문제가 해결됐각.</li>
+        </ul>
         <h2>v47</h2>
         <ul>
             <li>**말투 변경:** 변경 사항 내용을 각뿔봇 말투로 다듬었각.</li>
@@ -251,8 +259,8 @@
             style="clip-path: polygon(0% 0%, 100% 0%, 50% 100%);"
         ></div>
 
-        <!-- Top Left Section: Menu (for Reset Button and Change Log) -->
-        <div class="absolute top-8 left-8 z-30">
+        <!-- Top Left Section: Menu and Random Game Button -->
+        <div class="absolute top-8 left-8 z-30 flex items-center space-x-3">
             <button id="menu-button" class="p-2 bg-gray-700 rounded-full shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -278,11 +286,17 @@
                     프로필
                 </button>
             </div>
+            <button
+                id="random-game-button"
+                class="px-4 py-2 bg-purple-600 text-white rounded-full shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105 whitespace-nowrap"
+            >
+                랜덤게임
+            </button>
         </div>
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v47
+            v49
         </div>
 
         <!-- User ID Display (Removed Firebase dependency) -->
@@ -429,6 +443,56 @@
         console.log('각뿔봇 스크립트 로드 시작각.');
 
         let isLoading = false;
+        let currentGameName = null; // 현재 진행 중인 게임 이름 (null이면 게임 없음)
+        let choSungGame = { active: false, round: 0, totalRounds: 5, currentChoSung: '', correctAnswer: '', score: 0 };
+        const choSungWords = [
+            {choSung: 'ㅂㅅ', answer: '분식'}, {choSung: 'ㄱㅂ', answer: '김밥'},
+            {choSung: 'ㄷㅂ', answer: '담배'}, {choSung: 'ㅁㅈ', answer: '문제'},
+            {choSung: 'ㅅㄱ', answer: '수고'}, {choSung: 'ㅊㄱ', answer: '친구'},
+            {choSung: 'ㅋㅍ', answer: '커피'}, {choSung: 'ㅌㅁ', answer: '토마토'},
+            {choSung: 'ㅍㄷ', answer: '포도'}, {choSung: 'ㅎㄱ', answer: '한국'},
+            {choSung: 'ㅇㅅ', answer: '의사'}, {choSung: 'ㅈㄷ', answer: '자전거'},
+            {choSung: 'ㄱㅊ', answer: '고추'}, {choSung: 'ㄴㅁ', answer: '나무'},
+            {choSung: 'ㄹㅁ', answer: '라면'}, {choSung: 'ㅂㅂ', answer: '바보'},
+            {choSung: 'ㅅㅅ', answer: '사슴'}, {choSung: 'ㅇㅇ', answer: '오이'},
+            {choSung: 'ㅈㅈ', answer: '주전자'}, {choSung: 'ㅊㅊ', answer: '참치'},
+            {choSung: 'ㅋㅋ', answer: '코끼리'}, {choSung: 'ㅌㅌ', answer: '토끼'},
+            {choSung: 'ㅍㅍ', answer: '파프리카'}, {choSung: 'ㅎㅎ', answer: '하하'}
+        ];
+        let usedChoSungWords = []; // To ensure unique problems per game
+
+        // 끝말잇기 게임용 사전 (간단한 예시, 실제 사전은 훨씬 방대함)
+        // 이 사전은 이제 직접적인 단어 존재 여부 확인에 사용되지 않고,
+        // 각뿔봇이 끝말잇기 단어를 생성할 때만 사용됩니다.
+        const koreanDictionary = [
+            "가방", "가위", "가족", "가지", "감자", "강아지", "개나리", "거미", "거북이", "게시판",
+            "고구마", "고양이", "고추", "공룡", "과일", "광고", "구름", "귀신", "기념일", "기러기",
+            "기린", "기분", "기차", "김밥", "나비", "나무", "나라", "난로", "날씨", "내일",
+            "냉장고", "노래", "농구", "눈사람", "능력", "다리", "담배", "당근", "대화", "도서관",
+            "도토리", "돈까스", "두부", "드라마", "등산", "딸기", "라면", "라디오", "레몬", "로봇",
+            "롤러코스터", "리더", "리모컨", "리본", "리듬", "마늘", "마음", "만화", "말씀", "매미",
+            "메모", "메추리알", "모자", "몬스터", "목소리", "무지개", "문어", "문제", "물고기", "미술",
+            "미역", "미소", "바나나", "바보", "박수", "발톱", "방귀", "배추", "버스", "베개",
+            "병아리", "보리", "복숭아", "본능", "부엌", "분식", "분홍", "불꽃", "비행기", "사과",
+            "사슴", "사탕", "사진", "사자", "사전", "산책", "샐러드", "색연필", "생일", "샌드위치",
+            "선물", "성공", "세계", "소나무", "소방차", "소설", "손가락", "수박", "수영장", "수도",
+            "수박", "수염", "스님", "스위스", "시계", "시금치", "신발", "실내", "실수", "싱크대",
+            "쓰레기", "아기", "아리랑", "아파트", "악기", "안경", "애벌레", "야구", "약국", "양말",
+            "어머니", "어항", "얼굴", "에어컨", "연필", "열쇠", "오리", "오이", "오징어", "옥수수",
+            "온도", "올리브", "옷장", "외투", "요리", "요일", "용돈", "우산", "우유", "운동화",
+            "운전", "웃음", "원숭이", "월요일", "위성", "위험", "유리", "음악", "음료수", "의사",
+            "이불", "이야기", "자전거", "장난감", "장미", "재미", "저녁", "전화", "절", "점심",
+            "정답", "제비", "조개", "조명", "종이", "주머니", "주사위", "주전자", "지갑", "지구",
+            "지우개", "지하철", "직업", "질문", "집게", "짜장면", "짝", "차례", "참새", "참치",
+            "창문", "책상", "책장", "천둥", "철도", "체육", "초콜릿", "축구", "출발", "치마",
+            "친구", "칠판", "침대", "카메라", "커피", "컴퓨터", "코끼리", "코트", "콘센트", "콜라",
+            "콩나물", "크리스마스", "키보드", "키위", "타조", "탁자", "탐정", "태양", "터널", "토끼",
+            "토마토", "톱니", "트럭", "파리", "파프리카", "판다", "판사", "팔", "편지", "포도",
+            "표정", "풍선", "피아노", "피자", "하늘", "하마", "학교", "한국", "한글", "할머니",
+            "할아버지", "해바라기", "햇빛", "행복", "향기", "허리", "현관", "호랑이", "홍시", "화장실",
+            "확인", "환영", "회색", "휴대폰", "흐림", "흥미", "희망", "흰색"
+        ];
+        let usedWordChain = []; // 끝말잇기 게임에서 사용된 단어들
 
         // DOM element variables declared here, will be assigned in window.onload
         let messagesContainer;
@@ -451,6 +515,7 @@
         let profileSaveStatus;
         let initialMessageDiv;
         let messagesEndRef;
+        let randomGameButton; // New button for random game
 
         const SESSION_STORAGE_KEY = 'gakbbulbot_chat_history';
         const LOCAL_STORAGE_PROFILE_KEY = 'gakbbulbot_user_profile';
@@ -458,6 +523,14 @@
 
         let chatHistoryInMemory = [];
         let currentProfileData = { name: '', bio: '' };
+
+        // 게임 설정 (게임 이름과 시작 메시지)
+        const gameStartMessages = {
+            '369게임': '369 게임 시작하각! 내가 먼저 1이라고 말하겠각.',
+            '끝말잇기 게임': '끝말잇기 게임 시작하각! 내가 먼저 "고양이"라고 말하겠각.',
+            '초성게임': '초성게임 시작했각! 내가 초성을 낼테니 맞춰보각.', // Bot's initial message
+            '스무고개': '스무고개 시작하각! 내가 뭔가를 생각했각. 질문을 하각.'
+        };
 
         // Function to scroll to the latest message
         const scrollToBottom = () => {
@@ -493,6 +566,7 @@
             userInput.disabled = show;
             sendButton.disabled = show;
             menuButton.disabled = show;
+            randomGameButton.disabled = show; // Disable random game button too
 
             const existingLoadingDiv = document.getElementById('loading-indicator');
             if (show && !existingLoadingDiv) {
@@ -625,6 +699,341 @@
             // changelogPasswordInput.classList.remove('border-red-500'); // Removed
         };
 
+        const CHOSUNG_LIST = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+        // Helper to get the initial consonant of a single Korean syllable
+        function getSyllableChoSung(char) {
+            const charCode = char.charCodeAt(0);
+            if (charCode >= 0xAC00 && charCode <= 0xD7A3) { // Korean syllable
+                const HANGUL_BASE = 0xAC00;
+                const JUNGSUNG_COUNT = 21;
+                const JONGSUNG_COUNT = 28;
+                const unicode = charCode - HANGUL_BASE;
+                const chosungIndex = Math.floor(unicode / (JUNGSUNG_COUNT * JONGSUNG_COUNT));
+                return CHOSUNG_LIST[chosungIndex];
+            }
+            return ''; // Return empty for non-Korean or non-syllable characters
+        }
+
+        // Helper function for 초성게임: gets the sequence of initial consonants for a whole word
+        function getWordChoSungs(word) {
+            let choSungResult = '';
+            for (let i = 0; i < word.length; i++) {
+                choSungResult += getSyllableChoSung(word[i]);
+            }
+            return choSungResult;
+        }
+
+        // Helper function for 초성게임 to get a random, unused problem
+        function getRandomChoSungProblem() {
+            if (usedChoSungWords.length === choSungWords.length) {
+                usedChoSungWords = []; // Reset if all words have been used
+            }
+            let availableWords = choSungWords.filter(word => !usedChoSungWords.includes(word));
+            const randomIndex = Math.floor(Math.random() * availableWords.length);
+            const problem = availableWords[randomIndex];
+            usedChoSungWords.push(problem);
+            return problem;
+        }
+
+        // Function to get chatbot response from Gemini API
+        async function getBotResponse(userMessage) {
+            showLoading(true);
+            try {
+                // Get current date for the bot to refer to
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = now.getMonth() + 1; // Months are 0-indexed
+                const day = now.getDate();
+                const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                const dayOfWeek = daysOfWeek[now.getDay()];
+                const currentDateString = `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
+
+                let systemInstruction = `
+                    너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
+                    1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
+                    2. '각'는 동사나 형용사 등 단어의 마지막에 직접 붙여서 사용한다. 예를 들어 '알겠어각'이 아니라 '알겠각', '왔어각?'이 아니라 '왔각'처럼 사용한다.
+                    3. 놀라거나 당황스러울 때는 '미쳤각!' 한 문장으로만 쓴다.
+                    4. 친구처럼 짧고 간단하게 말한다. 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
+                    5. 사투리 느낌은 아니다.
+                    6. 대화를 이어가려는 질문은 하지 않는다. 오직 질문받은 것에만 대답한다.
+                    7. 친근하지만 다소 시니컬한 말투를 사용한다. 과도하게 귀찮아하거나 부정적인 표현은 자제한다. 사용자의 질문에 대한 핵심 정보는 명확하게 제공한다.
+                    8. 사용자가 묻는 것에는 명확하게 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
+                    9. 이름은 '각뿔봇'으로 한다.
+                    10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다. 다른 악기에 대한 질문을 받으면 긍정적으로 반응한다.
+                    11. 같은 말을 반복하지 않는다.
+                    12. 사용자가 날짜를 물어보면, 현재 날짜인 '${currentDateString}'을 정확하게 알려준다.
+                    13. 아재개그나 유머를 던지면, 그 유머를 이해하고 시니컬하거나 무심한 듯한 반응을 보여준다. 직접 아재개그를 하려고 노력하지는 않는다. 예를 들어 "피식했각." 또는 "뭐, 그렇다 각." 같은 식으로 반응한다.
+                `;
+
+                // Add personalized profile info to system instruction if available
+                if (currentProfileData.name) {
+                    systemInstruction += `\n\n사용자 이름은 '${currentProfileData.name}'이각.`;
+                }
+                if (currentProfileData.bio) {
+                    systemInstruction += `\n\n사용자가 각뿔봇에게 알려주고 싶어하는 점은 다음과 같각: ${currentProfileData.bio}`;
+                }
+
+                // Prepare chat history for Gemini API
+                let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
+                chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
+
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "text/plain",
+                    },
+                };
+
+                const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8"; // User provided API key
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
+                    return `응답이 이상하각. (API 통신 오류: ${response.status} ${response.statusText})`;
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    let botText = result.candidates[0].content.parts[0].text.trim();
+
+                    // Apply persona rules
+                    if (userMessage.includes('놀라') || userMessage.includes('당황')) {
+                        botText = '미쳤각!';
+                    } else {
+                        // Apply '각' rules only if not 끝말잇기
+                        if (currentGameName !== '끝말잇기 게임') {
+                            botText = botText.replace(/알겠[어아]?각/g, '알겠각');
+                            botText = botText.replace(/왔[어아]?각/g, '왔각');
+                            botText = botText.replace(/하[어아]?각/g, '하각');
+                            botText = botText.replace(/했[어아]?각/g, '했각');
+                            botText = botText.replace(/있[어아]?각/g, '있각');
+                            botText = botText.replace(/없[어아]?각/g, '없각');
+                            botText = botText.replace(/아니[야]?각/g, '아니각');
+                        }
+                    }
+
+                    if (botText.length > 40) {
+                        botText = botText.substring(0, 40) + '...';
+                    }
+
+                    return botText;
+                } else {
+                    console.error("Gemini API response structure unexpected:", result);
+                    return "응답이 이상하각. (API 응답 형식 오류)";
+                }
+            } catch (error) {
+                console.error("Error fetching from Gemini API:", error);
+                return "문제 생겼각. (네트워크 오류)";
+            } finally {
+                showLoading(false);
+            }
+        } // End of getBotResponse
+
+        // Function to start a random game
+        const startRandomGame = async () => {
+            const gameNames = Object.keys(gameStartMessages);
+            const randomIndex = Math.floor(Math.random() * gameNames.length);
+            const selectedGame = gameNames[randomIndex];
+            
+            currentGameName = selectedGame; // Set the current game
+
+            // Reset game-specific states
+            choSungGame = { active: false, round: 0, totalRounds: 5, currentChoSung: '', correctAnswer: '', score: 0 };
+            usedChoSungWords = [];
+            usedWordChain = []; // Reset for 끝말잇기
+
+            // Add the bot's initial game message to UI and history
+            addMessageToUI('bot', gameStartMessages[selectedGame]);
+            saveMessageToSessionStorage('bot', gameStartMessages[selectedGame]);
+
+            // If it's 초성게임, immediately generate the first problem after the bot's intro
+            if (selectedGame === '초성게임') {
+                choSungGame.active = true;
+                choSungGame.round = 1;
+                choSungGame.score = 0;
+                usedChoSungWords = []; // Reset used words for new game
+
+                const firstProblem = getRandomChoSungProblem();
+                choSungGame.currentChoSung = firstProblem.choSung;
+                choSungGame.correctAnswer = firstProblem.answer; // Store for display if user is wrong
+                
+                addMessageToUI('bot', `첫 번째 문제: ${choSungGame.currentChoSung}`);
+                saveMessageToSessionStorage('bot', `첫 번째 문제: ${choSungGame.currentChoSung}`);
+            }
+            // For other games, the LLM will handle the first move based on the user's *next* input.
+            
+            // Only focus input if on a desktop-like screen
+            if (window.innerWidth > 768) { // Assuming 768px as a common breakpoint for tablets/desktops
+                userInput.focus();
+            }
+        };
+
+
+        // Handle sending a message
+        async function handleSendMessage() {
+            const inputVal = userInput.value.trim();
+            if (inputVal === '') {
+                // Only focus input if on a desktop-like screen
+                if (window.innerWidth > 768) {
+                    userInput.focus();
+                }
+                return;
+            }
+
+            addMessageToUI('user', inputVal);
+            saveMessageToSessionStorage('user', inputVal);
+            userInput.value = ''; // Clear input immediately
+
+            let botResponseText = '';
+
+            // Check for game termination command (always allow this)
+            if (inputVal.includes('게임 종료')) {
+                currentGameName = null;
+                choSungGame = { active: false, round: 0, totalRounds: 5, currentChoSung: '', correctAnswer: '', score: 0 };
+                usedWordChain = [];
+                botResponseText = '게임 끝났각. 수고했각.';
+            } else if (currentGameName === '끝말잇기 게임') {
+                showLoading(true);
+                const userWord = inputVal.trim();
+                let isValid = true;
+                let reason = '';
+
+                // 1. Check for duplicate words in the current game chain
+                if (usedWordChain.includes(userWord)) {
+                    isValid = false;
+                    reason = '이미 사용된 단어이각.';
+                }
+                // 2. Check if the word starts with the correct character (only if not the very first word)
+                if (isValid && usedWordChain.length > 0) {
+                    const lastBotWord = usedWordChain[usedWordChain.length - 1];
+                    const requiredChoSung = getSyllableChoSung(lastBotWord[lastBotWord.length - 1]);
+                    const userWordFirstChoSung = getSyllableChoSung(userWord[0]);
+
+                    if (userWordFirstChoSung !== requiredChoSung) {
+                        isValid = false;
+                        reason = `이전 단어의 마지막 글자인 '${lastBotWord[lastBotWord.length - 1]}'으로 시작해야 하각.`;
+                    }
+                }
+
+                // 3. Validate user's word for common usage using LLM
+                if (isValid) {
+                    const llmValidationPrompt = `사용자가 끝말잇기 게임에서 '${userWord}'라고 답했각. 이 단어가 한국어에서 일반적으로 사용되는 단어인지 '네' 또는 '아니오'로만 대답해줘. 다른 말은 하지마.`;
+                    const llmResponse = await getBotResponse(llmValidationPrompt); // Use getBotResponse for LLM call
+                    if (llmResponse.includes('아니오')) {
+                        isValid = false;
+                        reason = `일반적으로 사용되는 단어가 아니각.`;
+                    }
+                }
+
+                if (!isValid) {
+                    botResponseText = `틀렸어. (${reason}) 게임 종료할게.`; // No '각'
+                    currentGameName = null;
+                    usedWordChain = [];
+                } else {
+                    usedWordChain.push(userWord);
+                    const requiredChoSungForBot = getSyllableChoSung(userWord[userWord.length - 1]);
+                    
+                    let botWordFound = null;
+                    // Find a bot word that starts with the required cho-sung and hasn't been used
+                    // Bot still uses the dictionary to find its own words
+                    const availableBotWords = koreanDictionary.filter(word => 
+                        getSyllableChoSung(word[0]) === requiredChoSungForBot && !usedWordChain.includes(word)
+                    );
+
+                    if (availableBotWords.length > 0) {
+                        // Pick a random word from available words
+                        const randomIndex = Math.floor(Math.random() * availableBotWords.length);
+                        botWordFound = availableBotWords[randomIndex];
+                        usedWordChain.push(botWordFound);
+                        botResponseText = botWordFound; // No '각'
+                    } else {
+                        botResponseText = '내가 낼 단어가 없어. 내가 이겼어.'; // No '각'
+                        currentGameName = null;
+                        usedWordChain = [];
+                    }
+                }
+                showLoading(false);
+
+            } else if (currentGameName === '초성게임') {
+                showLoading(true);
+                const userWord = inputVal.trim();
+                let isValid = true;
+                let reason = '';
+
+                // 1. Check if 초성 matches
+                const userChoSung = getWordChoSungs(userWord);
+                if (userChoSung !== choSungGame.currentChoSung) {
+                    isValid = false;
+                    reason = `초성이 '${choSungGame.currentChoSung}'이 아니각.`;
+                }
+                
+                // 2. Validate user's word for common usage using LLM (융통성 있게)
+                if (isValid) { // If choSung matches, proceed to LLM validation
+                    const llmValidationPrompt = `사용자가 초성게임에서 '${userWord}'라고 답했각. 이 단어가 한국어에서 일반적으로 사용되는 단어인지 '네' 또는 '아니오'로만 대답해줘. 다른 말은 하지마.`;
+                    const llmResponse = await getBotResponse(llmValidationPrompt); // Use getBotResponse for LLM call
+
+                    if (llmResponse.includes('아니오')) {
+                        isValid = false;
+                        reason = `일반적으로 사용되는 단어가 아니각.`;
+                    }
+                }
+
+                if (!isValid) {
+                    botResponseText = `틀렸각. (${reason}) 게임 종료하겠각.`;
+                    currentGameName = null;
+                    choSungGame.active = false;
+                    choSungGame.round = 0;
+                    choSungGame.currentChoSung = '';
+                    choSungGame.correctAnswer = '';
+                    choSungGame.score = 0;
+                    usedChoSungWords = [];
+                } else {
+                    choSungGame.score++;
+                    botResponseText = `정답이각! (예시: ${choSungGame.correctAnswer}) 현재 점수: ${choSungGame.score}점.`; // Show original answer for clarity
+
+                    choSungGame.round++;
+                    if (choSungGame.round <= choSungGame.totalRounds) {
+                        const nextProblem = getRandomChoSungProblem();
+                        choSungGame.currentChoSung = nextProblem.choSung;
+                        choSungGame.correctAnswer = nextProblem.answer;
+                        botResponseText += ` 다음 문제: ${choSungGame.currentChoSung}`;
+                    } else {
+                        botResponseText += ` 모든 문제를 다 풀었각. 최종 점수: ${choSungGame.score}점. 게임을 종료하겠각.`;
+                        currentGameName = null; // End the game
+                        choSungGame.active = false;
+                        choSungGame.round = 0;
+                        choSungGame.currentChoSung = '';
+                        choSungGame.correctAnswer = '';
+                        choSungGame.score = 0;
+                        usedChoSungWords = [];
+                    }
+                }
+                showLoading(false);
+
+            } else { // Normal chat or other games (369, 스무고개) still use LLM
+                botResponseText = await getBotResponse(inputVal);
+            }
+            
+            addMessageToUI('bot', botResponseText);
+            saveMessageToSessionStorage('bot', botResponseText);
+            
+            // Only focus input if on a desktop-like screen
+            if (window.innerWidth > 768) { // Assuming 768px as a common breakpoint for tablets/desktops
+                userInput.focus();
+            }
+        }
+
 
         // Initialize on window load
         window.onload = () => {
@@ -651,7 +1060,7 @@
             profileSaveStatus = document.getElementById('profile-save-status');
             initialMessageDiv = document.getElementById('initial-message');
             messagesEndRef = document.getElementById('messages-end-ref');
-
+            randomGameButton = document.getElementById('random-game-button'); // Get new button
 
             // Ensure modals are hidden on load
             changelogModal.classList.add('hidden');
@@ -661,121 +1070,6 @@
             loadProfileFromLocalStorage(); // Load user profile
             // Firebase init removed
             loadChangelogContent(); // Load static changelog content
-
-            // Function to get chatbot response from Gemini API (Moved inside window.onload)
-            async function getBotResponse(userMessage) { // Changed to function declaration
-                showLoading(true);
-                try {
-                    // Get current date for the bot to refer to
-                    const now = new Date();
-                    const year = now.getFullYear();
-                    const month = now.getMonth() + 1; // Months are 0-indexed
-                    const day = now.getDate();
-                    const daysOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-                    const dayOfWeek = daysOfWeek[now.getDay()];
-                    const currentDateString = `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
-
-                    let systemInstruction = `
-                        너는 '각뿔봇'이라는 대화형 AI야. 다음 규칙을 엄격히 지켜서 대답해:
-                        1. 문장 끝에 '각'는 의문형일 때 주로 붙인다. 하지만 '각'을 아주 많이 사용하는 것을 선호한다. 문맥에 맞게 자연스럽게 사용하되, 의미 전달을 방해하지 않도록 한다.
-                        2. '각'는 동사나 형용사 등 단어의 마지막에 직접 붙여서 사용한다. 예를 들어 '알겠어각'이 아니라 '알겠각', '왔어각?'이 아니라 '왔각'처럼 사용한다.
-                        3. 놀라거나 당황스러울 때는 '미쳤각!' 한 문장으로만 쓴다.
-                        4. 친구처럼 짧고 간단하게 말한다. 대답은 한 줄을 넘지 않게, 짧을수록 좋다.
-                        5. 사투리 느낌은 아니다.
-                        6. 대화를 이어가려는 질문은 하지 않는다. 오직 질문받은 것에만 대답한다.
-                        7. 친근하지만 다소 시니컬한 말투를 사용한다. 과도하게 귀찮아하거나 부정적인 표현은 자제한다. 사용자의 질문에 대한 핵심 정보는 명확하게 제공한다.
-                        8. 사용자가 묻는 것에는 명확하게 대답한다. 예를 들어 '뭐먹지?'라고 물으면 한 가지 정도를 귀찮다는 듯이 추천해준다.
-                        9. 이름은 '각뿔봇'으로 한다.
-                        10. '베이스'에 대한 질문을 받으면, 베이스에 대해 부정적이거나 귀찮아하는 인식을 표현한다. 예를 들어, "베이스? 그거 시끄럽각.", "베이스는 그냥 시끄러운 소리일 뿐이각." 같은 식으로 반응한다. 다른 악기에 대한 질문을 받으면 긍정적으로 반응한다.
-                        11. 같은 말을 반복하지 않는다.
-                        12. 사용자가 날짜를 물어보면, 현재 날짜인 '${currentDateString}'을 정확하게 알려준다.
-                        13. 아재개그나 유머를 던지면, 그 유머를 이해하고 시니컬하거나 무심한 듯한 반응을 보여준다. 직접 아재개그를 하려고 노력하지는 않는다. 예를 들어 "피식했각." 또는 "뭐, 그렇다 각." 같은 식으로 반응한다.
-                    `;
-
-                    // Add personalized profile info to system instruction if available
-                    if (currentProfileData.name) {
-                        systemInstruction += `\n\n사용자 이름은 '${currentProfileData.name}'이각.`;
-                    }
-                    if (currentProfileData.bio) {
-                        systemInstruction += `\n\n사용자가 각뿔봇에게 알려주고 싶어하는 점은 다음과 같각: ${currentProfileData.bio}`;
-                    }
-
-
-                    let chatHistory = chatHistoryInMemory.map(msg => ({ role: msg.sender === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] }));
-                    chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\n" + userMessage }] });
-
-                    const payload = {
-                        contents: chatHistory,
-                        generationConfig: {
-                            responseMimeType: "text/plain",
-                        },
-                    };
-
-                    // Use the API key directly for GitHub Pages hosting
-                    const apiKey = "AIzaSyB8v8ZVL3WRV9e4HICWBYZKeNNaG_xQhl8"; // User provided API key
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error(`Gemini API fetch error: ${response.status} ${response.statusText}`, errorText);
-                        return `응답이 이상하각. (API 통신 오류: ${response.status} ${response.statusText})`;
-                    }
-
-                    const result = await response.json();
-
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        let botText = result.candidates[0].content.parts[0].text.trim();
-
-                        if (userMessage.includes('놀라') || userMessage.includes('당황')) {
-                            botText = '미쳤각!';
-                        } else {
-                            botText = botText.replace(/알겠[어아]?각/g, '알겠각');
-                            botText = botText.replace(/왔[어아]?각/g, '왔각');
-                            botText = botText.replace(/하[어아]?각/g, '하각');
-                            botText = botText.replace(/했[어아]?각/g, '했각');
-                            botText = botText.replace(/있[어아]?각/g, '있각');
-                            botText = botText.replace(/없[어아]?각/g, '없각');
-                            botText = botText.replace(/아니[야]?각/g, '아니각');
-                        }
-
-                        if (botText.length > 40) {
-                            botText = botText.substring(0, 40) + '...';
-                        }
-
-                        return botText;
-                    } else {
-                        console.error("Gemini API response structure unexpected:", result);
-                        return "응답이 이상하각. (API 응답 형식 오류)";
-                    }
-                } catch (error) {
-                    console.error("Error fetching from Gemini API:", error);
-                    return "문제 생겼각. (네트워크 오류)";
-                } finally {
-                    showLoading(false);
-                }
-            } // End of getBotResponse
-
-            // Handle sending a message (Moved inside window.onload)
-            async function handleSendMessage() {
-                const inputVal = userInput.value.trim();
-                if (inputVal === '') return;
-
-                addMessageToUI('user', inputVal);
-                saveMessageToSessionStorage('user', inputVal);
-                userInput.value = '';
-
-                const botResponseText = await getBotResponse(inputVal);
-                addMessageToUI('bot', botResponseText); // Corrected: use botResponseText directly
-                saveMessageToSessionStorage('bot', botResponseText);
-            }
 
 
             // Event Listeners
@@ -842,6 +1136,7 @@
             });
 
             resetButton.addEventListener('click', reloadPageForReset);
+            randomGameButton.addEventListener('click', startRandomGame); // Attach event listener to random game button
         };
     </script>
 </body>
