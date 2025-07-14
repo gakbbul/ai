@@ -129,6 +129,10 @@
     <!-- 변경 사항 내용을 여기에 직접 작성하세요. (HTML 형식) -->
     <!-- This div will now serve as the static changelog content -->
     <div id="changelog-data" class="hidden">
+        <h2>v45 (2025년 7월 13일)</h2>
+        <ul>
+            <li>**메시지 표시 오류 수정:** 각뿔봇이 대답을 해도 화면에 나타나지 않던 문제를 해결했각. 이제 각뿔봇의 대답을 볼 수 있을 거각!</li>
+        </ul>
         <h2>v44 (2025년 7월 13일)</h2>
         <ul>
             <li>**변경 사항 표시 방식 개선:** 이제 '변경 사항'을 누르면 새 페이지로 이동하지 않고, 각뿔봇 앱 안에서 바로 모달 창으로 보여줄 거각. 더 편리해졌각!</li>
@@ -270,7 +274,7 @@
 
         <!-- Top Right Section: Version Display -->
         <div class="absolute top-8 right-8 text-gray-400 text-sm z-20">
-            v44
+            v45
         </div>
 
         <!-- User ID Display (Removed Firebase dependency) -->
@@ -760,7 +764,7 @@
                 userInput.value = '';
 
                 const botResponseText = await getBotResponse(inputVal);
-                addMessageToUI('bot', botText); // Corrected: use botText directly
+                addMessageToUI('bot', botResponseText); // Corrected: use botResponseText directly
                 saveMessageToSessionStorage('bot', botResponseText);
             }
 
